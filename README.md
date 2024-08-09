@@ -14,25 +14,23 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Next.js Installation & Configuration
 
-1. Install
+### 1. Install Next.js
 
 ```bash
-   $ npx create-next-app@latest
+$ npx create-next-app@latest
 ```
 
-2. Add to package.json
+### 2. Install Prettier
 
 ```
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.3.2"
+$ npm install --save-dev @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier prettier
 ```
 
-3. Copy .eslintrc.json and .prettierrc.json files
+### 3. Copy .eslintrc.json and .prettierrc.json files
 
-4. Set VsCode workspace settings
+### 4. Set VsCode workspace settings
 
 ```
-   Editor: Format On Save Mode - checked
-   Editor: Default Formatter - set to Prettier
+Editor: Format On Save Mode - checked
+Editor: Default Formatter - set to Prettier
 ```
