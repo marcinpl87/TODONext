@@ -10,6 +10,12 @@ First, run the development server:
 $ npm run dev
 ```
 
+To run it on VirtualBox:
+
+```bash
+$ npm run dev -- -H 10.0.2.15
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Next.js Installation & Configuration

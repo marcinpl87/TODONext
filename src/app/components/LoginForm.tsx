@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
 	};
 
 	return (
-		<div className="z-10 w-full max-w-4xl items-center justify-between font-mono text-sm sm:flex p-24">
+		<div className="z-10 w-full max-w-4xl items-center justify-between font-mono sm:flex p-24">
 			<h2 className="text-center text-2xl font-bold mb-4">Login</h2>
 			<form onSubmit={onSubmit} className="sm:w-1/2">
 				<InputText
