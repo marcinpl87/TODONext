@@ -78,7 +78,11 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 							{project.title}
 						</Link>
 					</h3>
-					{project.description && <p>{project.description}</p>}
+					{project.description && (
+						<p className="whitespace-pre-line">
+							{project.description}
+						</p>
+					)}
 					<div className="mt-5">
 						<Button onClick={handleEdit}>Edit</Button>{' '}
 						<Button onClick={handleRemove}>Remove</Button>

@@ -19,7 +19,7 @@ export type Project = {
 
 export type Todo = {
 	id: string;
-	date: Date | null;
+	date: Date | null | undefined;
 	title: string;
 	isDone: boolean;
 	projectId: string;

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useRef, useState, useReducer, ChangeEvent } from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useRef, useState, useReducer, FormEvent } from 'react';
 import TimeAgo from 'react-timeago';
 import Card from './Card';
 import Button from './Button';
+import TodoForm from './TodoForm';
 import TodoTimer from './TodoTimer';
 import type { Todo } from '../types';
 
@@ -28,7 +28,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	const [estimatedTime, setEstimatedTime] = useState<number>(
 		todo.estimatedTime,
 	);
-	const [startDate, setStartDate] = useState<Date | null>(
+	const [startDate, setStartDate] = useState<Date | null | undefined>(
 		todo.date ? new Date(todo.date || '') : null,
 	);
 
@@ -69,7 +69,8 @@ const TodoItem: React.FC<TodoItemProps> = ({
 		setIsEditing(true);
 	};
 
-	const handleSave = () => {
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
 		updateTodo({
 			...todo,
 			title,
@@ -128,48 +129,19 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	return (
 		<Card as="li">
 			{isEditing ? (
-				<div>
-					<input
-						placeholder="Title"
-						value={title}
-						onChange={(e: ChangeEvent<HTMLInputElement>) =>
-							setTitle(e.target.value)
-						}
-						required
+				<form onSubmit={handleSubmit}>
+					<TodoForm
+						title={title}
+						setTitle={setTitle}
+						description={description}
+						setDescription={setDescription}
+						startDate={startDate}
+						setStartDate={setStartDate}
+						estimatedTime={estimatedTime}
+						setEstimatedTime={setEstimatedTime}
+						handleCancel={handleCancel}
 					/>
-					<br />
-					<textarea
-						placeholder="Description"
-						value={description}
-						onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-							setDescription(e.target.value)
-						}
-					/>
-					<br />
-					<input
-						placeholder="Time (in seconds)"
-						type="number"
-						value={estimatedTime}
-						onChange={(e: ChangeEvent<HTMLInputElement>) =>
-							setEstimatedTime(Number(e.target.value))
-						}
-					/>
-					<br />
-					<DatePicker
-						selected={startDate}
-						onChange={date => setStartDate(date)}
-						showTimeSelect
-						timeFormat="HH:mm"
-						timeIntervals={15}
-						dateFormat="yyyy-MM-dd HH:mm"
-						placeholderText="Date"
-					/>
-					<br />
-					<Button onClick={handleSave}>Save</Button>{' '}
-					<Button onClick={handleCancel}>Cancel</Button>
-					<br />
-					<br />
-				</div>
+				</form>
 			) : (
 				<div>
 					<h2 className="text-xl font-bold mb-5">{todo.title}</h2>
@@ -237,7 +209,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
 							todoTitle={todo.title}
 						/>
 					)}
-					<p className="mt-5">{todo.description}</p>
+					{todo.description && (
+						<p className="mt-5 whitespace-pre-line">
+							{todo.description}
+						</p>
+					)}
 					{todo.date && (
 						<p className="mt-5">
 							{new Date(todo.date?.toString() || '')
