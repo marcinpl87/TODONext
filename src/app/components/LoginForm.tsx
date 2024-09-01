@@ -24,7 +24,10 @@ const LoginForm: React.FC = () => {
 			const data = await response.json();
 			if (response.ok && data.message === 'OK') {
 				setIsError(false);
-				dispatchLogin(LOGIN_ACTIONS.LOGIN);
+				dispatchLogin({
+					action: LOGIN_ACTIONS.LOGIN,
+					userId: data.userId,
+				});
 			} else {
 				setIsError(true);
 			}
