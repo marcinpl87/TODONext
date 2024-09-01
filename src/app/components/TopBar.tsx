@@ -2,15 +2,20 @@
 
 import React from 'react';
 import { useDispatchLogin } from '../hooks';
-import { LOGIN_ACTIONS } from '../types';
+import { LOGIN_ACTIONS, type LoginState } from '../types';
 
-const TopBar: React.FC = () => {
+const TopBar: React.FC<{ loginState: LoginState }> = ({ loginState }) => {
 	const dispatchLogin = useDispatchLogin();
 
 	return (
 		<div className="mb-4">
-			Topbar menu{' '}
-			<button onClick={() => dispatchLogin(LOGIN_ACTIONS.LOGOUT)}>
+			Topbar menu ({loginState.userId}){' '}
+			<button
+				className="underline"
+				onClick={() =>
+					dispatchLogin({ action: LOGIN_ACTIONS.LOGOUT, userId: '' })
+				}
+			>
 				(logout)
 			</button>
 		</div>

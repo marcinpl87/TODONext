@@ -8,7 +8,12 @@ export enum LOGIN_ACTIONS {
 	LOGOUT = 'logout',
 }
 
-export type LoginState = boolean;
+export type LoginDispatch = {
+	action: LOGIN_ACTIONS;
+	userId: string;
+};
+
+export type LoginState = { isLoggedIn: boolean; userId: string };
 
 export type Project = {
 	id: string;

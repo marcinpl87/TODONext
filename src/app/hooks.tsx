@@ -9,30 +9,40 @@ import {
 } from 'react';
 import LoginForm from './components/LoginForm';
 import TopBar from './components/TopBar';
-import { LOGIN_ACTIONS, type LoginState } from './types';
+import { LOGIN_ACTIONS, type LoginDispatch, type LoginState } from './types';
 
-const LoginContext = createContext<LoginState>(false);
-const LoginDispatchContext = createContext<Dispatch<LOGIN_ACTIONS>>(() => null);
+const LoginContext = createContext<LoginState>({
+	isLoggedIn: false,
+	userId: '',
+});
+const LoginDispatchContext = createContext<Dispatch<LoginDispatch>>(() => null);
 
-const loginReducer = (state: LoginState, action: LOGIN_ACTIONS) => {
-	switch (action) {
+const loginReducer = (state: LoginState, loginDispatchData: LoginDispatch) => {
+	switch (loginDispatchData.action) {
 		case LOGIN_ACTIONS.LOGIN:
-			return true;
+			return { isLoggedIn: true, userId: loginDispatchData.userId };
 		case LOGIN_ACTIONS.LOGOUT:
-			return false;
+			return { isLoggedIn: false, userId: '' };
 		default:
-			throw new Error(`Unknown action: ${JSON.stringify(action)}`);
+			throw new Error(
+				`Unknown action: ${JSON.stringify(loginDispatchData)}`,
+			);
 	}
 };
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
-	const [state, dispatch] = useReducer(loginReducer, false);
+	const [state, dispatch] = useReducer<
+		(state: LoginState, loginDispatchData: LoginDispatch) => LoginState
+	>(loginReducer, {
+		isLoggedIn: false,
+		userId: '',
+	});
 	return (
 		<LoginDispatchContext.Provider value={dispatch}>
 			<LoginContext.Provider value={state}>
-				{state ? (
+				{state.isLoggedIn ? (
 					<>
-						<TopBar />
+						<TopBar loginState={state} />
 						{children}
 					</>
 				) : (
