@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import LoadingPage from './components/LoadingPage';
 import { LoginProvider } from './hooks';
-import './globals.css';
+import './globals.scss';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<main className="flex min-h-screen flex-col items-center">
+					<LoadingPage />
 					<LoginProvider>{children}</LoginProvider>
 				</main>
 			</body>

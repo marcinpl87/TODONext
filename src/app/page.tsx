@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useReducer } from 'react';
-import './globals.css';
 import Card from './components/Card';
 import Button from './components/Button';
 import InputText from './components/InputText';

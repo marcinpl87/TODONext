@@ -1,6 +1,7 @@
 'use client';
 
 import React, {
+	forwardRef,
 	type TextareaHTMLAttributes,
 	type InputHTMLAttributes,
 } from 'react';
@@ -13,18 +14,17 @@ type InputTextProps = {
 	| (TextareaHTMLAttributes<HTMLTextAreaElement> & { as?: 'textarea' })
 );
 
-const InputText: React.FC<InputTextProps> = ({
-	id,
-	label,
-	isError,
-	className,
-	as = 'input',
-	...props
-}) => {
-	const inputClass = `shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border-2 ${isError ? 'border-red-700' : 'border-transparent'}`;
+const InputText = forwardRef<
+	HTMLInputElement | HTMLTextAreaElement,
+	InputTextProps
+>(({ id, label, isError, className, as = 'input', ...props }, ref) => {
+	const inputClass = `shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border-2 ${
+		isError ? 'border-red-700' : 'border-transparent'
+	}`;
 	const commonProps = {
 		id,
 		className: `${inputClass} ${className || ''}`,
+		ref,
 		...props,
 	};
 
@@ -49,6 +49,6 @@ const InputText: React.FC<InputTextProps> = ({
 			)}
 		</>
 	);
-};
+});
 
 export default InputText;

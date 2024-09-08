@@ -2,7 +2,6 @@
 
 import React, { useReducer } from 'react';
 import Link from 'next/link';
-import '../../globals.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../components/TodoList';
 import TodoCreate from '../../components/TodoCreate';
