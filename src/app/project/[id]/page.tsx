@@ -16,27 +16,31 @@ type TodosProps = {
 const Todos: React.FC<TodosProps> = ({ params }) => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const projectId = params.id;
-	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(
-		LS_KEY_TODOS,
-		forceUpdate,
-	);
-	const [getLsProjects] = useLocalStorage<Project[]>(
-		LS_KEY_PROJECTS,
-		forceUpdate,
-	);
+	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(LS_KEY_TODOS);
+	const [getLsProjects] = useLocalStorage<Project[]>(LS_KEY_PROJECTS);
 	const selectedProject = getLsProjects().filter(p => p.id === projectId)[0];
-	const addTodo = (todo: Todo) => {
-		setLsTodos([...getLsTodos(), todo]);
+	const addTodo = (todo: Todo, callback: () => void) => {
+		setLsTodos([...getLsTodos(), todo], () => {
+			callback();
+			forceUpdate();
+		});
 	};
-	const updateTodo = (updatedTodo: Todo) => {
+	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
 		setLsTodos(
 			getLsTodos().map(todo =>
 				todo.id === updatedTodo.id ? updatedTodo : todo,
 			),
+			() => {
+				callback();
+				forceUpdate();
+			},
 		);
 	};
 	const removeTodo = (id: string) => {
-		setLsTodos(getLsTodos().filter(todo => todo.id !== id));
+		setLsTodos(
+			getLsTodos().filter(todo => todo.id !== id),
+			forceUpdate,
+		);
 	};
 
 	return (

@@ -8,7 +8,7 @@ import TodoForm from './TodoForm';
 import type { Todo } from '../types';
 
 type TodoCreateProps = {
-	addTodo: (todo: Todo) => void;
+	addTodo: (todo: Todo, callback: () => void) => void;
 	projectId: string;
 };
 
@@ -21,21 +21,25 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		addTodo({
-			id: uuidv4(),
-			projectId: projectId || '',
-			title,
-			date: startDate || null,
-			description,
-			estimatedTime,
-			isDone: false,
-			doneTimestamp: 0,
-			creationTimestamp: Date.now(),
-		});
-		setTitle('');
-		setDescription('');
-		setEstimatedTime(0);
-		setIsOpened(false);
+		addTodo(
+			{
+				id: uuidv4(),
+				projectId: projectId || '',
+				title,
+				date: startDate || null,
+				description,
+				estimatedTime,
+				isDone: false,
+				doneTimestamp: 0,
+				creationTimestamp: Date.now(),
+			},
+			() => {
+				setTitle('');
+				setDescription('');
+				setEstimatedTime(0);
+				setIsOpened(false);
+			},
+		);
 	};
 
 	const handleCancel = () => {

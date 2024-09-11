@@ -60,21 +60,26 @@ export const LoginProviderWrapper = ({ children }: { children: ReactNode }) => {
 export const useLogin = () => useContext(LoginContext);
 export const useDispatchLogin = () => useContext(LoginDispatchContext);
 
-export const useLocalStorage = <T,>(key: string, callback: () => void) => {
+export const useLocalStorage = <T,>(
+	key: string,
+): [() => T, (data: T, callback: () => void) => void] => {
 	const getStoredArr = (): T => {
 		const storedData = window.localStorage.getItem(key);
 		return storedData ? JSON.parse(storedData) || [] : [];
 	};
-	const setStoredArr = (data: T): void => {
+	const setStoredArr = (data: T, callback: () => void): void => {
 		window.localStorage.setItem(key, JSON.stringify(data));
 		const loaderWrapper = document.querySelector('.loader');
 		const loaderClass = 'loader--active';
 		loaderWrapper?.classList.add(loaderClass);
 		// TODO: Remove setTimeout and use a proper API call
-		setTimeout(() => {
-			callback();
-			loaderWrapper?.classList.remove(loaderClass);
-		}, 1500);
+		setTimeout(
+			() => {
+				callback();
+				loaderWrapper?.classList.remove(loaderClass);
+			},
+			Math.random() * (5000 - 1500) + 1500,
+		);
 	};
 
 	return [getStoredArr, setStoredArr] as const;

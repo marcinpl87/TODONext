@@ -8,7 +8,7 @@ import InputText from './InputText';
 import type { Project } from '../types';
 
 type ProjectFormProps = {
-	addProject: (project: Project) => void;
+	addProject: (project: Project, callback: () => void) => void;
 };
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ addProject }) => {
@@ -18,14 +18,19 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ addProject }) => {
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		addProject({
-			id: uuidv4(),
-			title,
-			description,
-			creationTimestamp: Date.now(),
-		});
-		setTitle('');
-		setIsOpened(false);
+		addProject(
+			{
+				id: uuidv4(),
+				title,
+				description,
+				creationTimestamp: Date.now(),
+			},
+			() => {
+				setTitle('');
+				setDescription('');
+				setIsOpened(false);
+			},
+		);
 	};
 
 	return (
