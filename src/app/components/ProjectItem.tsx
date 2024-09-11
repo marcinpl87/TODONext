@@ -9,7 +9,7 @@ import type { Project } from '../types';
 
 type ProjectItemProps = {
 	project: Project;
-	updateProject: (project: Project) => void;
+	updateProject: (project: Project, callback: () => void) => void;
 	removeProject: (id: string) => void;
 };
 
@@ -27,12 +27,16 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 	};
 
 	const handleSave = () => {
-		updateProject({
-			...project,
-			title,
-			description,
-		});
-		setIsEditing(false);
+		updateProject(
+			{
+				...project,
+				title,
+				description,
+			},
+			() => {
+				setIsEditing(false);
+			},
+		);
 	};
 
 	const handleCancel = () => {

@@ -12,32 +12,37 @@ import type { Project, Todo } from './types';
 
 const Home: React.FC = () => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
-	const [getLsProjects, setLsProjects] = useLocalStorage<Project[]>(
-		LS_KEY_PROJECTS,
-		forceUpdate,
-	);
-	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(
-		LS_KEY_TODOS,
-		forceUpdate,
-	);
+	const [getLsProjects, setLsProjects] =
+		useLocalStorage<Project[]>(LS_KEY_PROJECTS);
+	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(LS_KEY_TODOS);
 	const exportData: Record<string, object> = {};
 	exportData[LS_KEY_PROJECTS] = getLsProjects();
 	exportData[LS_KEY_TODOS] = getLsTodos();
 
-	const addProject = (project: Project) => {
-		setLsProjects([...getLsProjects(), project]);
+	const addProject = (project: Project, callback: () => void) => {
+		setLsProjects([...getLsProjects(), project], () => {
+			callback();
+			forceUpdate();
+		});
 	};
 
-	const updateProject = (updatedProject: Project) => {
+	const updateProject = (updatedProject: Project, callback: () => void) => {
 		setLsProjects(
 			getLsProjects().map(project =>
 				project.id === updatedProject.id ? updatedProject : project,
 			),
+			() => {
+				callback();
+				forceUpdate();
+			},
 		);
 	};
 
 	const removeProject = (id: string) => {
-		setLsProjects(getLsProjects().filter(project => project.id !== id));
+		setLsProjects(
+			getLsProjects().filter(project => project.id !== id),
+			forceUpdate,
+		);
 	};
 
 	const onExport = () => {
@@ -49,10 +54,10 @@ const Home: React.FC = () => {
 		if (textEl?.value) {
 			const data = JSON.parse(textEl.value);
 			if (data[LS_KEY_PROJECTS]) {
-				setLsProjects(data[LS_KEY_PROJECTS]);
+				setLsProjects(data[LS_KEY_PROJECTS], forceUpdate);
 			}
 			if (data[LS_KEY_TODOS]) {
-				setLsTodos(data[LS_KEY_TODOS]);
+				setLsTodos(data[LS_KEY_TODOS], forceUpdate);
 			}
 			textEl.value = '';
 		}

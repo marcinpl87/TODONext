@@ -10,7 +10,7 @@ import type { Todo } from '../types';
 
 type TodoItemProps = {
 	todo: Todo;
-	updateTodo: (todo: Todo) => void;
+	updateTodo: (todo: Todo, callback: () => void) => void;
 	removeTodo: (id: string) => void;
 };
 
@@ -71,19 +71,28 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		updateTodo({
-			...todo,
-			title,
-			description,
-			estimatedTime,
-			date: startDate,
-		});
-		if (
-			timer !== getTimeRemainingToTimerString(getDeadTime(estimatedTime))
-		) {
-			setTimer(getTimeRemainingToTimerString(getDeadTime(estimatedTime)));
-		}
-		setIsEditing(false);
+		updateTodo(
+			{
+				...todo,
+				title,
+				description,
+				estimatedTime,
+				date: startDate,
+			},
+			() => {
+				if (
+					timer !==
+					getTimeRemainingToTimerString(getDeadTime(estimatedTime))
+				) {
+					setTimer(
+						getTimeRemainingToTimerString(
+							getDeadTime(estimatedTime),
+						),
+					);
+				}
+				setIsEditing(false);
+			},
+		);
 	};
 
 	const handleCancel = () => {
@@ -110,12 +119,16 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	};
 
 	const toggleDone = () => {
-		updateTodo({
-			...todo,
-			isDone: !todo.isDone,
-			doneTimestamp: Date.now(),
-		});
-		setIsEditing(false);
+		updateTodo(
+			{
+				...todo,
+				isDone: !todo.isDone,
+				doneTimestamp: Date.now(),
+			},
+			() => {
+				setIsEditing(false);
+			},
+		);
 	};
 
 	const handleRemove = () => {

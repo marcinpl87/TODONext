@@ -8,7 +8,7 @@ type TodoListProps = {
 	todos: Todo[];
 	filterFn: (todo: Todo) => boolean;
 	sortFn: (a: Todo, b: Todo) => number;
-	updateTodo: (todo: Todo) => void;
+	updateTodo: (todo: Todo, callback: () => void) => void;
 	removeTodo: (id: string) => void;
 };
 
@@ -18,22 +18,20 @@ const TodoList: React.FC<TodoListProps> = ({
 	sortFn,
 	updateTodo,
 	removeTodo,
-}) => {
-	return (
-		<ul className="w-full flex flex-col items-center">
-			{todos
-				.filter(filterFn)
-				.sort(sortFn)
-				.map(todo => (
-					<TodoItem
-						key={todo.id}
-						todo={todo}
-						updateTodo={updateTodo}
-						removeTodo={removeTodo}
-					/>
-				))}
-		</ul>
-	);
-};
+}) => (
+	<ul className="w-full flex flex-col items-center">
+		{todos
+			.filter(filterFn)
+			.sort(sortFn)
+			.map(todo => (
+				<TodoItem
+					key={todo.id}
+					todo={todo}
+					updateTodo={updateTodo}
+					removeTodo={removeTodo}
+				/>
+			))}
+	</ul>
+);
 
 export default TodoList;
