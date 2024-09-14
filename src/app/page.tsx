@@ -6,21 +6,30 @@ import Button from './components/Button';
 import InputText from './components/InputText';
 import ProjectForm from './components/ProjectForm';
 import ProjectItem from './components/ProjectItem';
-import { useLocalStorage } from './hooks';
+import LoadingIcon from './components/LoadingIcon';
+import { useRedisStorage } from './hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from './consts';
 import type { Project, Todo } from './types';
 
 const Home: React.FC = () => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
-	const [getLsProjects, setLsProjects] =
-		useLocalStorage<Project[]>(LS_KEY_PROJECTS);
-	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(LS_KEY_TODOS);
+	const [isProjectLoading, lsProjects, setLsProjects] =
+		useRedisStorage<Project[]>(LS_KEY_PROJECTS);
+	const [isTodoLoading, lsTodos, setLsTodos] =
+		useRedisStorage<Todo[]>(LS_KEY_TODOS);
 	const exportData: Record<string, object> = {};
-	exportData[LS_KEY_PROJECTS] = getLsProjects();
-	exportData[LS_KEY_TODOS] = getLsTodos();
+
+	if (isProjectLoading || isTodoLoading) {
+		return (
+			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
+
+	exportData[LS_KEY_PROJECTS] = lsProjects;
+	exportData[LS_KEY_TODOS] = lsTodos;
 
 	const addProject = (project: Project, callback: () => void) => {
-		setLsProjects([...getLsProjects(), project], () => {
+		setLsProjects([...lsProjects, project], () => {
 			callback();
 			forceUpdate();
 		});
@@ -28,7 +37,7 @@ const Home: React.FC = () => {
 
 	const updateProject = (updatedProject: Project, callback: () => void) => {
 		setLsProjects(
-			getLsProjects().map(project =>
+			lsProjects.map(project =>
 				project.id === updatedProject.id ? updatedProject : project,
 			),
 			() => {
@@ -39,10 +48,20 @@ const Home: React.FC = () => {
 	};
 
 	const removeProject = (id: string) => {
-		setLsProjects(
-			getLsProjects().filter(project => project.id !== id),
-			forceUpdate,
-		);
+		if (
+			confirm(
+				'Are you sure you want to remove this Project (the Project will be permanently deleted) ?',
+			)
+		) {
+			setLsProjects(
+				lsProjects.filter(project => project.id !== id),
+				forceUpdate,
+			);
+			setLsTodos(
+				lsTodos.filter(todo => todo.projectId !== id),
+				forceUpdate,
+			);
+		}
 	};
 
 	const onExport = () => {
@@ -54,12 +73,17 @@ const Home: React.FC = () => {
 		if (textEl?.value) {
 			const data = JSON.parse(textEl.value);
 			if (data[LS_KEY_PROJECTS]) {
-				setLsProjects(data[LS_KEY_PROJECTS], forceUpdate);
+				setLsProjects(data[LS_KEY_PROJECTS], () => {
+					textEl.value = '';
+					forceUpdate();
+				});
 			}
 			if (data[LS_KEY_TODOS]) {
-				setLsTodos(data[LS_KEY_TODOS], forceUpdate);
+				setLsTodos(data[LS_KEY_TODOS], () => {
+					textEl.value = '';
+					forceUpdate();
+				});
 			}
-			textEl.value = '';
 		}
 	};
 
@@ -68,7 +92,7 @@ const Home: React.FC = () => {
 			<h1 className="text-2xl font-bold mb-5">Projects</h1>
 			<ProjectForm addProject={addProject} />
 			<ul className="w-full flex flex-col items-center">
-				{getLsProjects()
+				{lsProjects
 					.sort(
 						(a, b) =>
 							(b.creationTimestamp || 0) -

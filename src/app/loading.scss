@@ -3,12 +3,10 @@ $tiles: 5;
 .wrapper {
 	height: 100vh;
 	text-align: center;
+}
 
-	button {
-		position: relative;
-		top: 50%;
-		transform: translateY(-50%);
-	}
+.loader__icon svg {
+	transform-origin: 0 0;
 }
 
 .loader {
@@ -30,10 +28,6 @@ $tiles: 5;
 		transform: translateX(-50%) translateY(-50%);
 		opacity: 0;
 		transition: opacity 0.5s ease;
-
-		svg {
-			transform-origin: 0 0;
-		}
 	}
 
 	#{$parent}__tile {

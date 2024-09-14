@@ -6,6 +6,8 @@ import {
 	createContext,
 	ReactNode,
 	Dispatch,
+	useState,
+	useEffect,
 } from 'react';
 import LoginForm from './components/LoginForm';
 import TopBar from './components/TopBar';
@@ -60,27 +62,45 @@ export const LoginProviderWrapper = ({ children }: { children: ReactNode }) => {
 export const useLogin = () => useContext(LoginContext);
 export const useDispatchLogin = () => useContext(LoginDispatchContext);
 
-export const useLocalStorage = <T,>(
+export const useRedisStorage = <T,>(
 	key: string,
-): [() => T, (data: T, callback: () => void) => void] => {
-	const getStoredArr = (): T => {
-		const storedData = window.localStorage.getItem(key);
-		return storedData ? JSON.parse(storedData) || [] : [];
-	};
-	const setStoredArr = (data: T, callback: () => void): void => {
-		window.localStorage.setItem(key, JSON.stringify(data));
+): [boolean, T | [], (data: T, callback: () => void) => void] => {
+	const endpoint = '/api/data';
+	const [data, setData] = useState<T | []>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch(
+					`${endpoint}?${new URLSearchParams({ key }).toString()}`,
+				);
+				const result = await response.json();
+				setData(result?.data ? result.data || [] : []);
+			} catch (error) {
+				console.error('Error fetching data:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchData();
+	}, [key]);
+
+	const setStoredArr = async (
+		data: T,
+		callback: () => void,
+	): Promise<void> => {
 		const loaderWrapper = document.querySelector('.loader');
 		const loaderClass = 'loader--active';
 		loaderWrapper?.classList.add(loaderClass);
-		// TODO: Remove setTimeout and use a proper API call
-		setTimeout(
-			() => {
-				callback();
-				loaderWrapper?.classList.remove(loaderClass);
-			},
-			Math.random() * (5000 - 1500) + 1500,
-		);
+		await fetch(endpoint, {
+			method: 'POST',
+			body: JSON.stringify({ key, data }),
+		});
+		callback();
+		setData(data);
+		loaderWrapper?.classList.remove(loaderClass);
 	};
 
-	return [getStoredArr, setStoredArr] as const;
+	return [isLoading, data, setStoredArr] as const;
 };
