@@ -2,11 +2,11 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { LS_KEY_USERS } from '@/app/consts';
 
-export async function POST(request: NextRequest) {
+export const POST = async (request: NextRequest) => {
 	const data = await request.formData();
 	const redis = new Redis({
-		url: process.env.UPSTASH_URL,
-		token: process.env.UPSTASH_TOKEN,
+		url: process.env.UPSTASH_REDIS_REST_URL,
+		token: process.env.UPSTASH_REDIS_REST_TOKEN,
 	});
 	const redisUser: Record<string, string>[] | null =
 		await redis.get(LS_KEY_USERS);
@@ -35,4 +35,4 @@ export async function POST(request: NextRequest) {
 			{ status: 403 },
 		);
 	}
-}
+};

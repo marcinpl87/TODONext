@@ -5,7 +5,8 @@ import Link from 'next/link';
 import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../components/TodoList';
 import TodoCreate from '../../components/TodoCreate';
-import { useLocalStorage } from '../../hooks';
+import LoadingIcon from '@/app/components/LoadingIcon';
+import { useRedisStorage } from '../../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../../consts';
 import type { Project, Todo } from '../../types';
 
@@ -16,18 +17,27 @@ type TodosProps = {
 const Todos: React.FC<TodosProps> = ({ params }) => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const projectId = params.id;
-	const [getLsTodos, setLsTodos] = useLocalStorage<Todo[]>(LS_KEY_TODOS);
-	const [getLsProjects] = useLocalStorage<Project[]>(LS_KEY_PROJECTS);
-	const selectedProject = getLsProjects().filter(p => p.id === projectId)[0];
+	const [isTodoLoading, lsTodos, setLsTodos] =
+		useRedisStorage<Todo[]>(LS_KEY_TODOS);
+	const [isProjectLoading, lsProjects] =
+		useRedisStorage<Project[]>(LS_KEY_PROJECTS);
+
+	if (isProjectLoading || isTodoLoading) {
+		return (
+			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
+
+	const selectedProject = lsProjects.filter(p => p.id === projectId)[0];
 	const addTodo = (todo: Todo, callback: () => void) => {
-		setLsTodos([...getLsTodos(), todo], () => {
+		setLsTodos([...lsTodos, todo], () => {
 			callback();
 			forceUpdate();
 		});
 	};
 	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
 		setLsTodos(
-			getLsTodos().map(todo =>
+			lsTodos.map(todo =>
 				todo.id === updatedTodo.id ? updatedTodo : todo,
 			),
 			() => {
@@ -37,10 +47,16 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 		);
 	};
 	const removeTodo = (id: string) => {
-		setLsTodos(
-			getLsTodos().filter(todo => todo.id !== id),
-			forceUpdate,
-		);
+		if (
+			confirm(
+				'Are you sure you want to remove this TODO (the TODO will be permanently deleted) ?',
+			)
+		) {
+			setLsTodos(
+				lsTodos.filter(todo => todo.id !== id),
+				forceUpdate,
+			);
+		}
 	};
 
 	return (
@@ -60,7 +76,7 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 					)}
 					<TodoCreate addTodo={addTodo} projectId={projectId} />
 					<TodoList
-						todos={getLsTodos()}
+						todos={lsTodos}
 						filterFn={t => t.projectId === projectId && !t.isDone}
 						sortFn={(a, b) =>
 							(b.creationTimestamp || 0) -
@@ -69,13 +85,12 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 						updateTodo={updateTodo}
 						removeTodo={removeTodo}
 					/>
-					{getLsTodos().filter(
-						t => t.projectId === projectId && t.isDone,
-					).length > 0 && (
+					{lsTodos.filter(t => t.projectId === projectId && t.isDone)
+						.length > 0 && (
 						<h1 className="text-2xl font-bold mb-5">DONE</h1>
 					)}
 					<TodoList
-						todos={getLsTodos()}
+						todos={lsTodos}
 						filterFn={t => t.projectId === projectId && t.isDone}
 						sortFn={(a, b) =>
 							(b.doneTimestamp || 0) - (a.doneTimestamp || 0)
