@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useReducer } from 'react';
-import Card from './components/Card';
-import Button from './components/Button';
-import InputText from './components/InputText';
-import ProjectForm from './components/ProjectForm';
-import ProjectItem from './components/ProjectItem';
-import LoadingIcon from './components/LoadingIcon';
-import { useRedisStorage } from './hooks';
-import { LS_KEY_PROJECTS, LS_KEY_TODOS } from './consts';
-import type { Project, Todo } from './types';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import InputText from '../components/InputText';
+import ProjectForm from '../components/ProjectForm';
+import ProjectItem from '../components/ProjectItem';
+import LoadingIcon from '../components/LoadingIcon';
+import { useRedisStorage } from '../hooks';
+import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../consts';
+import type { Project, Todo } from '../types';
 
 const Home: React.FC = () => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
