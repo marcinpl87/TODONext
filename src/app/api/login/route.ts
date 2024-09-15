@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
-import { LS_KEY_USERS } from '@/app/consts';
+import { LS_KEY_USERS } from '@/consts';
 
 export const POST = async (request: NextRequest) => {
 	const data = await request.formData();

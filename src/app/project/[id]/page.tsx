@@ -3,12 +3,12 @@
 import React, { useReducer } from 'react';
 import Link from 'next/link';
 import 'react-datepicker/dist/react-datepicker.css';
-import TodoList from '../../components/TodoList';
-import TodoCreate from '../../components/TodoCreate';
-import LoadingIcon from '@/app/components/LoadingIcon';
-import { useRedisStorage } from '../../hooks';
-import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../../consts';
-import type { Project, Todo } from '../../types';
+import TodoList from '../../../components/TodoList';
+import TodoCreate from '../../../components/TodoCreate';
+import LoadingIcon from '@/components/LoadingIcon';
+import { useRedisStorage } from '../../../hooks';
+import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../../../consts';
+import type { Project, Todo } from '../../../types';
 
 type TodosProps = {
 	params: { id: string };
