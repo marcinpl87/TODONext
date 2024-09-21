@@ -1,3 +1,10 @@
+export type NavItem = {
+	title: string;
+	href?: string;
+	disabled?: boolean;
+	external?: boolean;
+};
+
 export type UserObject = {
 	id: string;
 	name: string;

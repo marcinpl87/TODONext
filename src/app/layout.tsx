@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
 import LoadingPage from '../components/LoadingPage';
+import { cn, fontSans } from '../utils';
 import { LoginProvider } from '../hooks';
 import '../globals.scss';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
 	title: 'TODO Next App',
@@ -18,12 +17,24 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body className={inter.className}>
-				<main className="flex min-h-screen flex-col items-center">
-					<LoadingPage />
-					<LoginProvider>{children}</LoginProvider>
-				</main>
+		<html lang="en" suppressHydrationWarning>
+			<head />
+			<body
+				className={cn(
+					'min-h-screen bg-background font-sans antialiased',
+					fontSans.variable,
+				)}
+			>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+				>
+					<main className="flex min-h-screen flex-col items-center">
+						<LoadingPage />
+						<LoginProvider>{children}</LoginProvider>
+					</main>
+				</ThemeProvider>
 			</body>
 		</html>
 	);
