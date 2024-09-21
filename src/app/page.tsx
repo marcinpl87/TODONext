@@ -88,10 +88,10 @@ const Home: React.FC = () => {
 	};
 
 	return (
-		<>
-			<h1 className="text-2xl font-bold mb-5">Projects</h1>
+		<div className="flex flex-col items-center max-w-4xl m-auto">
+			<h1 className="text-2xl font-bold my-5">Projects</h1>
 			<ProjectForm addProject={addProject} />
-			<ul className="w-full flex flex-col items-center">
+			<ul className="w-full">
 				{lsProjects
 					.sort(
 						(a, b) =>
@@ -127,7 +127,7 @@ const Home: React.FC = () => {
 					Import
 				</Button>
 			</Card>
-		</>
+		</div>
 	);
 };
 

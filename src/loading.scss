@@ -35,7 +35,7 @@ $tiles: 5;
 		left: 0;
 		width: 0;
 		height: 20%;
-		background-color: rgb(var(--background-end-rgb));
+		background-color: hsl(var(--background-loading));
 		transition: width 0.7s ease;
 
 		@for $i from 0 through $tiles {

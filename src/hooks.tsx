@@ -9,6 +9,7 @@ import {
 	useState,
 	useEffect,
 } from 'react';
+import SiteHeader from './components/SiteHeader';
 import LoginForm from './components/LoginForm';
 import TopBar from './components/TopBar';
 import { LOGIN_ACTIONS, type LoginDispatch, type LoginState } from './types';
@@ -43,10 +44,11 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 		<LoginDispatchContext.Provider value={dispatch}>
 			<LoginContext.Provider value={state}>
 				{state.isLoggedIn ? (
-					<>
+					<div className="relative w-full flex min-h-screen flex-col">
 						<TopBar loginState={state} />
-						{children}
-					</>
+						<SiteHeader />
+						<div className="flex-1">{children}</div>
+					</div>
 				) : (
 					<LoginForm />
 				)}

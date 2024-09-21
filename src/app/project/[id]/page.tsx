@@ -63,18 +63,20 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 		<>
 			{projectId && (
 				<>
-					<h1 className="text-2xl font-bold underline mb-5">
-						<Link href="/">🗂️</Link>
-					</h1>
-					<h1 className="text-2xl font-bold mb-5">
-						{selectedProject?.title}
-					</h1>
-					{selectedProject?.description && (
-						<p className="mb-5 px-5 whitespace-pre-line">
-							{selectedProject.description}
-						</p>
-					)}
-					<TodoCreate addTodo={addTodo} projectId={projectId} />
+					<div className="flex flex-col items-center max-w-4xl m-auto">
+						<h1 className="text-2xl font-bold underline my-5">
+							<Link href="/">🗂️</Link>
+						</h1>
+						<h1 className="text-2xl font-bold mb-5">
+							{selectedProject?.title}
+						</h1>
+						{selectedProject?.description && (
+							<p className="mb-5 px-5 whitespace-pre-line">
+								{selectedProject.description}
+							</p>
+						)}
+						<TodoCreate addTodo={addTodo} projectId={projectId} />
+					</div>
 					<TodoList
 						todos={lsTodos}
 						filterFn={t => t.projectId === projectId && !t.isDone}
@@ -87,7 +89,9 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 					/>
 					{lsTodos.filter(t => t.projectId === projectId && t.isDone)
 						.length > 0 && (
-						<h1 className="text-2xl font-bold mb-5">DONE</h1>
+						<h1 className="flex flex-col items-center max-w-4xl m-auto text-2xl font-bold mb-5">
+							DONE
+						</h1>
 					)}
 					<TodoList
 						todos={lsTodos}
