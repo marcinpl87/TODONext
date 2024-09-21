@@ -109,7 +109,7 @@ const Home: React.FC = () => {
 			</ul>
 			<h1 className="mb-5 text-2xl font-bold">Export / import</h1>
 			<Card>
-				<p className="text-[7px] leading-[7px] break-all font-mono">
+				<p className="text-[7px] leading-[7px] break-all font-mono overflow-hidden">
 					{JSON.stringify(exportData)}
 				</p>
 				<Button className="block mt-5" onClick={onExport}>
