@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useRef, useState, useReducer, FormEvent } from 'react';
-import TimeAgo from 'react-timeago';
 import Card from './Card';
-import Button from './Button';
 import TodoForm from './TodoForm';
 import TodoTimer from './TodoTimer';
+import TodoControls from './TodoControls';
 import type { Todo } from '../types';
 
 type TodoItemProps = {
@@ -20,7 +19,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	removeTodo,
 }) => {
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
-	const timerComponentRef = useRef(null);
+	const timerComponentRef = useRef<HTMLDivElement>(null);
 	const intervalRef = useRef<NodeJS.Timeout | null>(null); // because dealing with JS setInterval to keep track of it
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>(todo.title);
@@ -157,55 +156,9 @@ const TodoItem: React.FC<TodoItemProps> = ({
 				</form>
 			) : (
 				<div>
-					<h2 className="text-xl font-bold mb-5">{todo.title}</h2>
-					<p>
-						{!todo.isDone && (
-							<>
-								{!intervalRef.current ? (
-									<Button onClick={handleStart}>▶</Button>
-								) : (
-									<Button onClick={handlePause}>
-										&nbsp;II&nbsp;
-									</Button>
-								)}{' '}
-								<Button
-									disabled={
-										!(
-											timer !==
-											getTimeRemainingToTimerString(
-												getDeadTime(todo.estimatedTime),
-											)
-										)
-									}
-									onClick={handleStop}
-								>
-									◼
-								</Button>{' '}
-							</>
-						)}
-						<Button onClick={toggleDone}>
-							{todo.isDone ? '❎' : '✔️'}
-						</Button>{' '}
-						<Button onClick={handleEdit}>✏️</Button>{' '}
-						<Button onClick={handleRemove}>🗑️</Button>{' '}
-						{todo.creationTimestamp && (
-							<>
-								(
-								<TimeAgo
-									date={new Date(todo.creationTimestamp)}
-								/>
-								{todo.isDone && todo.doneTimestamp && (
-									<>
-										{' - '}
-										<TimeAgo
-											date={new Date(todo.doneTimestamp)}
-										/>
-									</>
-								)}
-								)
-							</>
-						)}
-					</p>
+					<h2 className="text-xl font-bold break-words">
+						{todo.title}
+					</h2>
 					{!todo.isDone && (
 						<TodoTimer
 							ref={timerComponentRef}
@@ -223,7 +176,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 						/>
 					)}
 					{todo.description && (
-						<p className="mt-5 whitespace-pre-line">
+						<p className="mt-5 whitespace-pre-line break-words">
 							{todo.description}
 						</p>
 					)}
@@ -234,6 +187,21 @@ const TodoItem: React.FC<TodoItemProps> = ({
 								.slice(0, -3)}
 						</p>
 					)}
+					<TodoControls
+						todo={todo}
+						timer={timer}
+						intervalRefCurrent={intervalRef.current}
+						handleStart={handleStart}
+						handlePause={handlePause}
+						handleStop={handleStop}
+						handleEdit={handleEdit}
+						handleRemove={handleRemove}
+						toggleDone={toggleDone}
+						getDeadTime={getDeadTime}
+						getTimeRemainingToTimerString={
+							getTimeRemainingToTimerString
+						}
+					/>
 				</div>
 			)}
 		</Card>

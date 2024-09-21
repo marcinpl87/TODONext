@@ -77,7 +77,7 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 				</div>
 			) : (
 				<div>
-					<h3 className="font-bold underline mb-5">
+					<h3 className="font-bold underline text-xl mb-5">
 						<Link href={`project/${project.id}`}>
 							{project.title}
 						</Link>
@@ -88,8 +88,8 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 						</p>
 					)}
 					<div className="mt-5">
-						<Button onClick={handleEdit}>Edit</Button>{' '}
-						<Button onClick={handleRemove}>Remove</Button>
+						<Button onClick={handleEdit}>✏️</Button>{' '}
+						<Button onClick={handleRemove}>🗑️</Button>
 					</div>
 				</div>
 			)}
