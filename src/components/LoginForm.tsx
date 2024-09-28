@@ -27,6 +27,7 @@ const LoginForm: React.FC = () => {
 				dispatchLogin({
 					action: LOGIN_ACTIONS.LOGIN,
 					userId: data.userId,
+					userName: data.userName,
 				});
 			} else {
 				setIsError(true);

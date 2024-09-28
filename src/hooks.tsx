@@ -11,21 +11,25 @@ import {
 } from 'react';
 import SiteHeader from './components/SiteHeader';
 import LoginForm from './components/LoginForm';
-import TopBar from './components/TopBar';
 import { LOGIN_ACTIONS, type LoginDispatch, type LoginState } from './types';
 
 const LoginContext = createContext<LoginState>({
 	isLoggedIn: false,
 	userId: '',
+	userName: '',
 });
 const LoginDispatchContext = createContext<Dispatch<LoginDispatch>>(() => null);
 
 const loginReducer = (state: LoginState, loginDispatchData: LoginDispatch) => {
 	switch (loginDispatchData.action) {
 		case LOGIN_ACTIONS.LOGIN:
-			return { isLoggedIn: true, userId: loginDispatchData.userId };
+			return {
+				isLoggedIn: true,
+				userId: loginDispatchData.userId,
+				userName: loginDispatchData.userName,
+			};
 		case LOGIN_ACTIONS.LOGOUT:
-			return { isLoggedIn: false, userId: '' };
+			return { isLoggedIn: false, userId: '', userName: '' };
 		default:
 			throw new Error(
 				`Unknown action: ${JSON.stringify(loginDispatchData)}`,
@@ -39,13 +43,13 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 	>(loginReducer, {
 		isLoggedIn: false,
 		userId: '',
+		userName: '',
 	});
 	return (
 		<LoginDispatchContext.Provider value={dispatch}>
 			<LoginContext.Provider value={state}>
 				{state.isLoggedIn ? (
 					<div className="relative w-full flex min-h-screen flex-col">
-						<TopBar loginState={state} />
 						<SiteHeader />
 						<div className="flex-1">{children}</div>
 					</div>
