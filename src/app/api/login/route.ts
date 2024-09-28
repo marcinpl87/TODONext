@@ -20,7 +20,7 @@ export const POST = async (request: NextRequest) => {
 		const user = redisUser.find(user => user.name === data.get('username'));
 		if (user && user.pass === data.get('password')) {
 			return NextResponse.json(
-				{ message: 'OK', userId: user.id },
+				{ message: 'OK', userId: user.id, userName: user.name },
 				{ status: 200 },
 			);
 		} else {
