@@ -16,18 +16,23 @@ import {
 	CardHeader,
 	CardTitle,
 	CardContent,
+	CardDescription,
+	CardFooter,
 } from '../../components/ui/card';
-import MyAvatar from '../../components/MyAvatar';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { Button } from '../../components/ui/button';
+import { Textarea } from '../../components/ui/textarea';
+import MyAvatar from '../../components/MyAvatar';
 
 const Home: React.FC = () => {
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
-			<h1 className="my-5 text-2xl font-bold">Test</h1>
+			<h1 className="my-5 text-2xl font-bold">Card</h1>
 			<Card className="w-full max-w-4xl mb-5">
 				<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 					<CardTitle className="text-md">
-						00:15:00 (1 day ago - 15 hours ago)
+						2024-09-24 22:00 | 00:15:00 | 1 day ago - 15 hours ago
 					</CardTitle>
 					<MyAvatar />
 				</CardHeader>
@@ -73,6 +78,32 @@ const Home: React.FC = () => {
 						<Trash className="size-5" />
 					</Button>
 				</CardContent>
+			</Card>
+			<h1 className="mb-5 text-2xl font-bold">Form</h1>
+			<Card className="w-full max-w-4xl mb-5">
+				<CardHeader>
+					<CardTitle>Report an issue</CardTitle>
+					<CardDescription>
+						What area are you having problems with?
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="grid gap-6">
+					<div className="grid gap-2">
+						<Label htmlFor="subject">Subject</Label>
+						<Input id="subject" placeholder="I need help with..." />
+					</div>
+					<div className="grid gap-2">
+						<Label htmlFor="description">Description</Label>
+						<Textarea
+							id="description"
+							placeholder="Please include all information relevant to your issue."
+						/>
+					</div>
+				</CardContent>
+				<CardFooter className="justify-between space-x-2">
+					<Button variant="ghost">Cancel</Button>
+					<Button variant="outline">Submit</Button>
+				</CardFooter>
 			</Card>
 		</div>
 	);

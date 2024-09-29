@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useReducer } from 'react';
-import Link from 'next/link';
 import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
@@ -64,10 +63,7 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 			{projectId && (
 				<>
 					<div className="flex flex-col items-center max-w-4xl m-auto">
-						<h1 className="text-2xl font-bold underline my-5">
-							<Link href="/">🗂️</Link>
-						</h1>
-						<h1 className="text-2xl font-bold mb-5">
+						<h1 className="text-2xl font-bold my-5">
 							{selectedProject?.title}
 						</h1>
 						{selectedProject?.description && (

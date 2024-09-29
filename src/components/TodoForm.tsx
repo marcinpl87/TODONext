@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent } from 'react';
 import DatePicker from 'react-datepicker';
-import { DATE_FORMAT, DEFAULT_TIMEOUT } from '../consts';
+import { DATE_FORMAT } from '../consts';
 import Button from './Button';
 import InputText from './InputText';
 
@@ -54,7 +54,7 @@ const TodoForm: React.FC<TodoFormProps> = ({
 			className="mt-5"
 			type="number"
 			placeholder="Time (is seconds)"
-			value={estimatedTime || DEFAULT_TIMEOUT}
+			value={estimatedTime}
 			onChange={(e: ChangeEvent<HTMLInputElement>) =>
 				setEstimatedTime(Number(e.target.value))
 			}

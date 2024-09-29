@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Github, LogOut } from 'lucide-react';
 import { siteConfig } from '../config';
 import { useDispatchLogin, useLogin } from '../hooks';
-import { Button, buttonVariants } from './ui/button';
+import { Button } from './ui/button';
 import MainNav from './MainNav';
 import ThemeToggle from './ThemeToggle';
 import MyAvatar from './MyAvatar';
@@ -23,15 +23,10 @@ const SiteHeader: React.FC = () => {
 							target="_blank"
 							rel="noreferrer"
 						>
-							<div
-								className={buttonVariants({
-									size: 'icon',
-									variant: 'ghost',
-								})}
-							>
+							<Button size="icon" variant="ghost">
 								<Github className="h-5 w-5" />
 								<span className="sr-only">GitHub</span>
-							</div>
+							</Button>
 						</Link>
 						<ThemeToggle />
 						<Button

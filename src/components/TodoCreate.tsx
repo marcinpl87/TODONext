@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Card from './Card';
 import Button from './Button';
 import TodoForm from './TodoForm';
+import { DEFAULT_TIMEOUT } from '../consts';
 import type { Todo } from '../types';
 
 type TodoCreateProps = {
@@ -16,7 +17,7 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
-	const [estimatedTime, setEstimatedTime] = useState<number>(0);
+	const [estimatedTime, setEstimatedTime] = useState<number>(DEFAULT_TIMEOUT);
 	const [startDate, setStartDate] = useState<Date | null>();
 
 	const handleSubmit = (e: FormEvent) => {
