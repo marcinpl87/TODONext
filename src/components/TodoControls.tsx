@@ -1,8 +1,19 @@
 'use client';
 
 import React from 'react';
-import Button from './Button';
-import MyTimeAgo from './MyTimeAgo';
+import Link from 'next/link';
+import { DateTime } from 'luxon';
+import {
+	CalendarPlus,
+	CircleCheckBig,
+	Pause,
+	PenLine,
+	Play,
+	Square,
+	Trash,
+	Undo,
+} from 'lucide-react';
+import { Button } from './ui/button';
 import type { Todo } from '../types';
 
 type TodoControlsProps = {
@@ -36,11 +47,17 @@ const TodoControls: React.FC<TodoControlsProps> = ({
 		{!todo.isDone && (
 			<>
 				{!intervalRefCurrent ? (
-					<Button onClick={handleStart}>▶</Button>
+					<Button variant="ghost" size="icon" onClick={handleStart}>
+						<Play className="size-5" />
+					</Button>
 				) : (
-					<Button onClick={handlePause}>&nbsp;II&nbsp;</Button>
-				)}{' '}
+					<Button variant="ghost" size="icon" onClick={handlePause}>
+						<Pause className="size-5" />
+					</Button>
+				)}
 				<Button
+					variant="ghost"
+					size="icon"
 					disabled={
 						!(
 							timer !==
@@ -51,26 +68,46 @@ const TodoControls: React.FC<TodoControlsProps> = ({
 					}
 					onClick={handleStop}
 				>
-					◼
-				</Button>{' '}
+					<Square className="size-5" />
+				</Button>
 			</>
 		)}
-		<Button onClick={toggleDone}>{todo.isDone ? '❎' : '✔️'}</Button>{' '}
-		<Button onClick={handleEdit}>✏️</Button>{' '}
-		<Button onClick={handleRemove}>🗑️</Button>{' '}
-		{todo.creationTimestamp && (
-			<>
-				(
-				<MyTimeAgo millis={todo.creationTimestamp} />
-				{todo.isDone && todo.doneTimestamp && (
-					<>
-						{' - '}
-						<MyTimeAgo millis={todo.doneTimestamp} />
-					</>
-				)}
+		<Button variant="ghost" size="icon" onClick={toggleDone}>
+			{todo.isDone ? (
+				<Undo className="size-5" />
+			) : (
+				<CircleCheckBig className="size-5" />
+			)}
+		</Button>
+		{todo.date && !todo.isDone && (
+			<Link
+				href={`https://calendar.google.com/calendar/u/0/r/eventedit?dates=${DateTime.fromJSDate(
+					todo.date,
 				)
-			</>
+					.toFormat('yyyyMMdd HHmmss')
+					.replace(' ', 'T')}/${DateTime.fromMillis(
+					DateTime.fromJSDate(todo.date).toMillis() +
+						todo.estimatedTime * 1000,
+				)
+					.toFormat('yyyyMMdd HHmmss')
+					.replace(
+						' ',
+						'T',
+					)}&text=${encodeURI(todo.title)}&details=${encodeURI(todo.description)}`}
+				target="_blank"
+				rel="noreferrer"
+			>
+				<Button variant="ghost" size="icon">
+					<CalendarPlus className="size-5" />
+				</Button>
+			</Link>
 		)}
+		<Button variant="ghost" size="icon" onClick={handleEdit}>
+			<PenLine className="size-5" />
+		</Button>
+		<Button variant="ghost" size="icon" onClick={handleRemove}>
+			<Trash className="size-5" />
+		</Button>
 	</p>
 );
 

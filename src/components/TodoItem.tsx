@@ -6,6 +6,7 @@ import TodoForm from './TodoForm';
 import TodoTimer from './TodoTimer';
 import TodoControls from './TodoControls';
 import type { Todo } from '../types';
+import MyTimeAgo from './MyTimeAgo';
 
 type TodoItemProps = {
 	todo: Todo;
@@ -156,35 +157,54 @@ const TodoItem: React.FC<TodoItemProps> = ({
 				</form>
 			) : (
 				<div>
+					<h2 className="text-xl font-bold mb-5">
+						{todo.date && (
+							<>
+								{new Date(todo.date?.toString() || '')
+									.toLocaleString('sv-SE')
+									.slice(0, -3)}
+								{' | '}
+							</>
+						)}
+						{!todo.isDone && (
+							<>
+								<TodoTimer
+									ref={timerComponentRef}
+									intervalRef={intervalRef}
+									getDeadTime={getDeadTime}
+									getTimeRemaining={getTimeRemaining}
+									getTimeRemainingToTimerString={
+										getTimeRemainingToTimerString
+									}
+									timer={timer}
+									setTimer={setTimer}
+									sec={todo.estimatedTime}
+									toggleDone={toggleDone}
+									todoTitle={todo.title}
+								/>
+								{' | '}
+							</>
+						)}
+						{todo.creationTimestamp && (
+							<>
+								<MyTimeAgo millis={todo.creationTimestamp} />
+								{todo.isDone && todo.doneTimestamp && (
+									<>
+										{' - '}
+										<MyTimeAgo
+											millis={todo.doneTimestamp}
+										/>
+									</>
+								)}
+							</>
+						)}
+					</h2>
 					<h2 className="text-xl font-bold break-words">
 						{todo.title}
 					</h2>
-					{!todo.isDone && (
-						<TodoTimer
-							ref={timerComponentRef}
-							intervalRef={intervalRef}
-							getDeadTime={getDeadTime}
-							getTimeRemaining={getTimeRemaining}
-							getTimeRemainingToTimerString={
-								getTimeRemainingToTimerString
-							}
-							timer={timer}
-							setTimer={setTimer}
-							sec={todo.estimatedTime}
-							toggleDone={toggleDone}
-							todoTitle={todo.title}
-						/>
-					)}
 					{todo.description && (
 						<p className="mt-5 whitespace-pre-line break-words">
 							{todo.description}
-						</p>
-					)}
-					{todo.date && (
-						<p className="mt-5">
-							{new Date(todo.date?.toString() || '')
-								.toLocaleString('sv-SE')
-								.slice(0, -3)}
 						</p>
 					)}
 					<TodoControls

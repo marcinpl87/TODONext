@@ -101,7 +101,7 @@ const TodoTimer = forwardRef<TodoTimerRef, TodoTimerProps>(
 			onClickStop,
 		}));
 
-		return <h2 className="text-xl font-bold mt-5">{timer}</h2>;
+		return <>{timer}</>;
 	},
 );
 
