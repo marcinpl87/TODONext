@@ -37,7 +37,7 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 			() => {
 				setTitle('');
 				setDescription('');
-				setEstimatedTime(0);
+				setEstimatedTime(DEFAULT_TIMEOUT);
 				setIsOpened(false);
 			},
 		);
