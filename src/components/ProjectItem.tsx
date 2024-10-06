@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import Card from './Card';
 import Button from './Button';
-import InputText from './InputText';
+import ProjectForm from './ProjectForm';
 import type { Project } from '../types';
 
 type ProjectItemProps = {
@@ -26,7 +26,8 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 		setIsEditing(true);
 	};
 
-	const handleSave = () => {
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
 		updateProject(
 			{
 				...project,
@@ -50,31 +51,15 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 	return (
 		<Card as="li">
 			{isEditing ? (
-				<div>
-					<InputText
-						value={title}
-						onChange={(e: ChangeEvent<HTMLInputElement>) =>
-							setTitle(e.target.value)
-						}
-						required
+				<form onSubmit={handleSubmit}>
+					<ProjectForm
+						title={title}
+						setTitle={setTitle}
+						description={description}
+						setDescription={setDescription}
+						handleCancel={handleCancel}
 					/>
-					<br />
-					<InputText
-						as="textarea"
-						className="block mt-5"
-						placeholder="Description"
-						value={description}
-						onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-							setDescription(e.target.value)
-						}
-					/>
-					<div className="block mt-5 text-right">
-						<Button className="mr-5" onClick={handleSave}>
-							Save
-						</Button>
-						<Button onClick={handleCancel}>Cancel</Button>
-					</div>
-				</div>
+				</form>
 			) : (
 				<div>
 					<h3 className="font-bold underline text-xl mb-5">
