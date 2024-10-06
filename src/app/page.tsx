@@ -4,7 +4,7 @@ import React, { useReducer } from 'react';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import InputText from '../components/InputText';
-import ProjectForm from '../components/ProjectForm';
+import ProjectCreate from '../components/ProjectCreate';
 import ProjectItem from '../components/ProjectItem';
 import LoadingIcon from '../components/LoadingIcon';
 import { useRedisStorage } from '../hooks';
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="text-2xl font-bold my-5">Projects</h1>
-			<ProjectForm addProject={addProject} />
+			<ProjectCreate addProject={addProject} />
 			<ul className="w-full">
 				{lsProjects
 					.sort(

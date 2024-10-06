@@ -23,6 +23,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
+import IconButton from '../../components/IconButton';
 import MyAvatar from '../../components/MyAvatar';
 
 const Home: React.FC = () => {
@@ -48,35 +49,30 @@ const Home: React.FC = () => {
 						Content Content Content Content Content Content Content
 						Content Content Content Content Content
 					</p>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					<IconButton tooltip="Start" onClick={() => {}}>
 						<Play className="size-5" />
-					</Button>
-					<Button
-						disabled
-						variant="ghost"
-						size="icon"
-						onClick={() => {}}
-					>
+					</IconButton>
+					<IconButton tooltip="Pause" disabled onClick={() => {}}>
 						<Pause className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Stop" onClick={() => {}}>
 						<Square className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Mark as done" onClick={() => {}}>
 						<CircleCheckBig className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Mark as undone" onClick={() => {}}>
 						<Undo className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Add to calendar" onClick={() => {}}>
 						<CalendarPlus className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Edit" onClick={() => {}}>
 						<PenLine className="size-5" />
-					</Button>
-					<Button variant="ghost" size="icon" onClick={() => {}}>
+					</IconButton>
+					<IconButton tooltip="Delete" onClick={() => {}}>
 						<Trash className="size-5" />
-					</Button>
+					</IconButton>
 				</CardContent>
 			</Card>
 			<h1 className="mb-5 text-2xl font-bold">Form</h1>
