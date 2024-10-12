@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, FormEvent } from 'react';
+import { PenLine, Trash } from 'lucide-react';
 import Link from 'next/link';
-import Card from './Card';
-import Button from './Button';
+import { Card, CardContent } from './ui/card';
 import ProjectForm from './ProjectForm';
+import IconButton from './IconButton';
 import type { Project } from '../types';
 
 type ProjectItemProps = {
@@ -49,34 +50,36 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 	};
 
 	return (
-		<Card as="li">
+		<Card className="w-full max-w-4xl mb-5">
 			{isEditing ? (
-				<form onSubmit={handleSubmit}>
-					<ProjectForm
-						title={title}
-						setTitle={setTitle}
-						description={description}
-						setDescription={setDescription}
-						handleCancel={handleCancel}
-					/>
-				</form>
+				<ProjectForm
+					header="Edit Project"
+					title={title}
+					setTitle={setTitle}
+					description={description}
+					setDescription={setDescription}
+					handleCancel={handleCancel}
+					handleSubmit={handleSubmit}
+				/>
 			) : (
-				<div>
-					<h3 className="font-bold underline text-xl mb-5">
+				<CardContent className="mt-5">
+					<div className="text-2xl font-bold underline pb-2">
 						<Link href={`project/${project.id}`}>
 							{project.title}
 						</Link>
-					</h3>
+					</div>
 					{project.description && (
-						<p className="whitespace-pre-line">
+						<p className="text-md text-muted-foreground pb-2 whitespace-pre-line">
 							{project.description}
 						</p>
 					)}
-					<div className="mt-5">
-						<Button onClick={handleEdit}>✏️</Button>{' '}
-						<Button onClick={handleRemove}>🗑️</Button>
-					</div>
-				</div>
+					<IconButton tooltip="Edit" onClick={handleEdit}>
+						<PenLine className="size-5" />
+					</IconButton>
+					<IconButton tooltip="Delete" onClick={handleRemove}>
+						<Trash className="size-5" />
+					</IconButton>
+				</CardContent>
 			)}
 		</Card>
 	);
