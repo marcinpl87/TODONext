@@ -51,7 +51,7 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 				{state.isLoggedIn ? (
 					<div className="relative w-full flex min-h-screen flex-col">
 						<SiteHeader />
-						<div className="flex-1">{children}</div>
+						<div className="flex-1 px-5">{children}</div>
 					</div>
 				) : (
 					<LoginForm />

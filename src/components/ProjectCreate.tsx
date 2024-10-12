@@ -2,8 +2,8 @@
 
 import React, { useState, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import Card from './Card';
-import Button from './Button';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
 import ProjectForm from './ProjectForm';
 import type { Project } from '../types';
 
@@ -40,17 +40,23 @@ const ProjectCreate: React.FC<ProjectCreateProps> = ({ addProject }) => {
 	return (
 		<>
 			{isOpened ? (
-				<Card as="form" onSubmit={handleSubmit}>
+				<Card className="w-full max-w-4xl mb-5">
 					<ProjectForm
+						header="New Project"
 						title={title}
 						setTitle={setTitle}
 						description={description}
 						setDescription={setDescription}
 						handleCancel={handleCancel}
+						handleSubmit={handleSubmit}
 					/>
 				</Card>
 			) : (
-				<Button className="mb-5" onClick={() => setIsOpened(true)}>
+				<Button
+					className="mb-5"
+					variant="outline"
+					onClick={() => setIsOpened(true)}
+				>
 					New Project
 				</Button>
 			)}

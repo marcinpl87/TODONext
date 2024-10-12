@@ -91,22 +91,19 @@ const Home: React.FC = () => {
 		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="text-2xl font-bold my-5">Projects</h1>
 			<ProjectCreate addProject={addProject} />
-			<ul className="w-full">
-				{lsProjects
-					.sort(
-						(a, b) =>
-							(b.creationTimestamp || 0) -
-							(a.creationTimestamp || 0),
-					)
-					.map(project => (
-						<ProjectItem
-							key={project.id}
-							project={project}
-							updateProject={updateProject}
-							removeProject={removeProject}
-						/>
-					))}
-			</ul>
+			{lsProjects
+				.sort(
+					(a, b) =>
+						(b.creationTimestamp || 0) - (a.creationTimestamp || 0),
+				)
+				.map(project => (
+					<ProjectItem
+						key={project.id}
+						project={project}
+						updateProject={updateProject}
+						removeProject={removeProject}
+					/>
+				))}
 			<h1 className="mb-5 text-2xl font-bold">Export / import</h1>
 			<Card>
 				<p className="text-[7px] leading-[7px] break-all font-mono overflow-hidden">
