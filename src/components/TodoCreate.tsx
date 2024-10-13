@@ -2,8 +2,8 @@
 
 import React, { useState, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import Card from './Card';
-import Button from './Button';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
 import TodoForm from './TodoForm';
 import { DEFAULT_TIMEOUT } from '../consts';
 import type { Todo } from '../types';
@@ -50,8 +50,9 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 	return (
 		<>
 			{isOpened ? (
-				<Card as="form" onSubmit={handleSubmit}>
+				<Card className="w-full max-w-4xl mb-5">
 					<TodoForm
+						header="New TODO"
 						title={title}
 						setTitle={setTitle}
 						description={description}
@@ -61,10 +62,15 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 						estimatedTime={estimatedTime}
 						setEstimatedTime={setEstimatedTime}
 						handleCancel={handleCancel}
+						handleSubmit={handleSubmit}
 					/>
 				</Card>
 			) : (
-				<Button className="mb-5" onClick={() => setIsOpened(true)}>
+				<Button
+					className="mb-5"
+					variant="outline"
+					onClick={() => setIsOpened(true)}
+				>
 					New TODO
 				</Button>
 			)}

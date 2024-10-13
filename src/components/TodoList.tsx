@@ -19,7 +19,7 @@ const TodoList: React.FC<TodoListProps> = ({
 	updateTodo,
 	removeTodo,
 }) => (
-	<ul className="w-full flex flex-col items-center">
+	<div className="w-full flex flex-col items-center">
 		{todos
 			.filter(filterFn)
 			.sort(sortFn)
@@ -31,7 +31,7 @@ const TodoList: React.FC<TodoListProps> = ({
 					removeTodo={removeTodo}
 				/>
 			))}
-	</ul>
+	</div>
 );
 
 export default TodoList;

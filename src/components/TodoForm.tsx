@@ -1,12 +1,16 @@
 'use client';
 
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 import DatePicker from 'react-datepicker';
 import { DATE_FORMAT } from '../consts';
-import Button from './Button';
-import InputText from './InputText';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
+import { CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 
 type TodoFormProps = {
+	header: string;
 	title: string;
 	setTitle: (value: React.SetStateAction<string>) => void;
 	description: string;
@@ -18,9 +22,11 @@ type TodoFormProps = {
 		value: React.SetStateAction<Date | null | undefined>,
 	) => void;
 	handleCancel: () => void;
+	handleSubmit: (e: FormEvent) => void;
 };
 
 const TodoForm: React.FC<TodoFormProps> = ({
+	header,
 	title,
 	setTitle,
 	description,
@@ -30,54 +36,81 @@ const TodoForm: React.FC<TodoFormProps> = ({
 	startDate,
 	setStartDate,
 	handleCancel,
+	handleSubmit,
 }) => (
-	<>
-		<InputText
-			type="text"
-			placeholder="Title"
-			value={title}
-			onChange={(e: ChangeEvent<HTMLInputElement>) =>
-				setTitle(e.target.value)
-			}
-			required
-		/>
-		<InputText
-			className="mt-5 block"
-			as="textarea"
-			placeholder="Description"
-			value={description}
-			onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-				setDescription(e.target.value)
-			}
-		/>
-		<InputText
-			className="mt-5"
-			type="number"
-			placeholder="Time (is seconds)"
-			value={estimatedTime}
-			onChange={(e: ChangeEvent<HTMLInputElement>) =>
-				setEstimatedTime(Number(e.target.value))
-			}
-			required
-		/>
-		<DatePicker
-			wrapperClassName="mt-5 w-full"
-			selected={startDate}
-			onChange={date => setStartDate(date)}
-			showTimeSelect
-			timeFormat="HH:mm"
-			timeIntervals={15}
-			dateFormat={DATE_FORMAT}
-			placeholderText="Date"
-			customInput={<InputText />}
-		/>
-		<div className="block mt-5 text-right">
-			<Button className="mr-5" type="submit">
+	<form onSubmit={handleSubmit}>
+		<CardHeader>
+			<CardTitle>{header}</CardTitle>
+		</CardHeader>
+		<CardContent className="grid gap-6">
+			<div className="grid gap-2">
+				<Label htmlFor="title">Title</Label>
+				<Input
+					id="title"
+					placeholder="TODO title..."
+					value={title}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						setTitle(e.target.value)
+					}
+					required
+				/>
+			</div>
+			<div className="grid gap-2">
+				<Label htmlFor="description">Description</Label>
+				<Textarea
+					id="description"
+					placeholder="Please include all information relevant to your TODO..."
+					value={description}
+					onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+						setDescription(e.target.value)
+					}
+				/>
+			</div>
+			<div className="grid gap-2">
+				<Label htmlFor="estimatedTime">
+					Estimated time (is seconds)
+				</Label>
+				<Input
+					id="estimatedTime"
+					type="number"
+					value={estimatedTime}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						setEstimatedTime(Number(e.target.value))
+					}
+					required
+				/>
+			</div>
+			<div className="grid gap-2">
+				<Label htmlFor="date">Date</Label>
+				<DatePicker
+					id="date"
+					wrapperClassName="w-full"
+					selected={startDate}
+					onChange={date => setStartDate(date)}
+					showTimeSelect
+					timeFormat="HH:mm"
+					timeIntervals={15}
+					dateFormat={DATE_FORMAT}
+					placeholderText="Date"
+					customInput={<Input />}
+				/>
+			</div>
+		</CardContent>
+		<CardFooter className="justify-between space-x-2">
+			<Button
+				variant="ghost"
+				onClick={e => {
+					e.preventDefault();
+					handleCancel();
+				}}
+			>
+				Cancel
+			</Button>
+			<Button variant="outline" type="submit">
 				Save
 			</Button>
-			<Button onClick={handleCancel}>Cancel</Button>
-		</div>
-	</>
+		</CardFooter>
+	</form>
 );
 
 export default TodoForm;
