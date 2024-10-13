@@ -13,7 +13,7 @@ import {
 	Trash,
 	Undo,
 } from 'lucide-react';
-import { Button } from './ui/button';
+import IconButton from './IconButton';
 import type { Todo } from '../types';
 
 type TodoControlsProps = {
@@ -43,21 +43,20 @@ const TodoControls: React.FC<TodoControlsProps> = ({
 	getDeadTime,
 	getTimeRemainingToTimerString,
 }) => (
-	<p className="mt-5">
+	<>
 		{!todo.isDone && (
 			<>
 				{!intervalRefCurrent ? (
-					<Button variant="ghost" size="icon" onClick={handleStart}>
+					<IconButton tooltip="Start" onClick={handleStart}>
 						<Play className="size-5" />
-					</Button>
+					</IconButton>
 				) : (
-					<Button variant="ghost" size="icon" onClick={handlePause}>
+					<IconButton tooltip="Pause" onClick={handlePause}>
 						<Pause className="size-5" />
-					</Button>
+					</IconButton>
 				)}
-				<Button
-					variant="ghost"
-					size="icon"
+				<IconButton
+					tooltip="Stop"
 					disabled={
 						!(
 							timer !==
@@ -69,16 +68,19 @@ const TodoControls: React.FC<TodoControlsProps> = ({
 					onClick={handleStop}
 				>
 					<Square className="size-5" />
-				</Button>
+				</IconButton>
 			</>
 		)}
-		<Button variant="ghost" size="icon" onClick={toggleDone}>
+		<IconButton
+			tooltip={`Mark as ${todo.isDone ? 'undone' : 'done'}`}
+			onClick={toggleDone}
+		>
 			{todo.isDone ? (
 				<Undo className="size-5" />
 			) : (
 				<CircleCheckBig className="size-5" />
 			)}
-		</Button>
+		</IconButton>
 		{todo.date && !todo.isDone && (
 			<Link
 				href={`https://calendar.google.com/calendar/u/0/r/eventedit?dates=${DateTime.fromJSDate(
@@ -97,18 +99,18 @@ const TodoControls: React.FC<TodoControlsProps> = ({
 				target="_blank"
 				rel="noreferrer"
 			>
-				<Button variant="ghost" size="icon">
+				<IconButton tooltip="Add to calendar">
 					<CalendarPlus className="size-5" />
-				</Button>
+				</IconButton>
 			</Link>
 		)}
-		<Button variant="ghost" size="icon" onClick={handleEdit}>
+		<IconButton tooltip="Edit" onClick={handleEdit}>
 			<PenLine className="size-5" />
-		</Button>
-		<Button variant="ghost" size="icon" onClick={handleRemove}>
+		</IconButton>
+		<IconButton tooltip="Delete" onClick={handleRemove}>
 			<Trash className="size-5" />
-		</Button>
-	</p>
+		</IconButton>
+	</>
 );
 
 export default TodoControls;

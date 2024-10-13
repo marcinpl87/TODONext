@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useRef, useState, useReducer, FormEvent } from 'react';
-import Card from './Card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import TodoForm from './TodoForm';
 import TodoTimer from './TodoTimer';
 import TodoControls from './TodoControls';
 import type { Todo } from '../types';
 import MyTimeAgo from './MyTimeAgo';
+import MyAvatar from './MyAvatar';
 
 type TodoItemProps = {
 	todo: Todo;
@@ -140,89 +141,92 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	);
 
 	return (
-		<Card as="li">
+		<Card className="w-full max-w-4xl mb-5">
 			{isEditing ? (
-				<form onSubmit={handleSubmit}>
-					<TodoForm
-						title={title}
-						setTitle={setTitle}
-						description={description}
-						setDescription={setDescription}
-						startDate={startDate}
-						setStartDate={setStartDate}
-						estimatedTime={estimatedTime}
-						setEstimatedTime={setEstimatedTime}
-						handleCancel={handleCancel}
-					/>
-				</form>
+				<TodoForm
+					header="Edit TODO"
+					title={title}
+					setTitle={setTitle}
+					description={description}
+					setDescription={setDescription}
+					startDate={startDate}
+					setStartDate={setStartDate}
+					estimatedTime={estimatedTime}
+					setEstimatedTime={setEstimatedTime}
+					handleCancel={handleCancel}
+					handleSubmit={handleSubmit}
+				/>
 			) : (
-				<div>
-					<h2 className="text-xl font-bold mb-5">
-						{todo.date && (
-							<>
-								{new Date(todo.date?.toString() || '')
-									.toLocaleString('sv-SE')
-									.slice(0, -3)}
-								{' | '}
-							</>
-						)}
-						{!todo.isDone && (
-							<>
-								<TodoTimer
-									ref={timerComponentRef}
-									intervalRef={intervalRef}
-									getDeadTime={getDeadTime}
-									getTimeRemaining={getTimeRemaining}
-									getTimeRemainingToTimerString={
-										getTimeRemainingToTimerString
-									}
-									timer={timer}
-									setTimer={setTimer}
-									sec={todo.estimatedTime}
-									toggleDone={toggleDone}
-									todoTitle={todo.title}
-								/>
-								{' | '}
-							</>
-						)}
-						{todo.creationTimestamp && (
-							<>
-								<MyTimeAgo millis={todo.creationTimestamp} />
-								{todo.isDone && todo.doneTimestamp && (
-									<>
-										{' - '}
-										<MyTimeAgo
-											millis={todo.doneTimestamp}
-										/>
-									</>
-								)}
-							</>
-						)}
-					</h2>
-					<h2 className="text-xl font-bold break-words">
-						{todo.title}
-					</h2>
-					{todo.description && (
-						<p className="mt-5 whitespace-pre-line break-words">
+				<>
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+						<CardTitle className="text-md font-mono">
+							{todo.date && (
+								<>
+									{new Date(todo.date?.toString() || '')
+										.toLocaleString('sv-SE')
+										.slice(0, -3)}
+									{' | '}
+								</>
+							)}
+							{!todo.isDone && (
+								<>
+									<TodoTimer
+										ref={timerComponentRef}
+										intervalRef={intervalRef}
+										getDeadTime={getDeadTime}
+										getTimeRemaining={getTimeRemaining}
+										getTimeRemainingToTimerString={
+											getTimeRemainingToTimerString
+										}
+										timer={timer}
+										setTimer={setTimer}
+										sec={todo.estimatedTime}
+										toggleDone={toggleDone}
+										todoTitle={todo.title}
+									/>
+									{' | '}
+								</>
+							)}
+							{todo.creationTimestamp && (
+								<>
+									<MyTimeAgo
+										millis={todo.creationTimestamp}
+									/>
+									{todo.isDone && todo.doneTimestamp && (
+										<>
+											{' - '}
+											<MyTimeAgo
+												millis={todo.doneTimestamp}
+											/>
+										</>
+									)}
+								</>
+							)}
+						</CardTitle>
+						<MyAvatar />
+					</CardHeader>
+					<CardContent>
+						<div className="text-2xl font-bold">{todo.title}</div>
+						<p className="text-md text-muted-foreground py-1">
 							{todo.description}
 						</p>
-					)}
-					<TodoControls
-						todo={todo}
-						timer={timer}
-						intervalRefCurrent={intervalRef.current}
-						handleStart={handleStart}
-						handlePause={handlePause}
-						handleStop={handleStop}
-						handleEdit={handleEdit}
-						handleRemove={handleRemove}
-						toggleDone={toggleDone}
-						getDeadTime={getDeadTime}
-						getTimeRemainingToTimerString={
-							getTimeRemainingToTimerString
-						}
-					/>
-				</div>
+						<TodoControls
+							todo={todo}
+							timer={timer}
+							intervalRefCurrent={intervalRef.current}
+							handleStart={handleStart}
+							handlePause={handlePause}
+							handleStop={handleStop}
+							handleEdit={handleEdit}
+							handleRemove={handleRemove}
+							toggleDone={toggleDone}
+							getDeadTime={getDeadTime}
+							getTimeRemainingToTimerString={
+								getTimeRemainingToTimerString
+							}
+						/>
+					</CardContent>
+				</>
 			)}
 		</Card>
 	);
