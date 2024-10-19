@@ -69,7 +69,7 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 						</Link>
 					</div>
 					{project.description && (
-						<p className="text-md text-muted-foreground pb-2 whitespace-pre-line">
+						<p className="text-md text-muted-foreground pb-2 whitespace-pre-line break-words">
 							{project.description}
 						</p>
 					)}
