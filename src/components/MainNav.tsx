@@ -13,14 +13,14 @@ const MainNav: React.FC<MainNavProps> = ({ items }) => {
 	const pathname = usePathname();
 
 	return (
-		<div className="flex gap-6 md:gap-10">
-			<Link href="/" className="flex items-center space-x-2">
+		<div className="space-y-6 -mt-4 md:mt-0 md:flex md:space-x-6 md:space-y-0">
+			<Link href="/" className="hidden md:flex items-center space-x-2">
 				<span className="inline-block font-bold">
 					{siteConfig.name}
 				</span>
 			</Link>
 			{items?.length ? (
-				<nav className="flex gap-6">
+				<>
 					{items?.map(
 						(item, index) =>
 							item.href && (
@@ -39,7 +39,7 @@ const MainNav: React.FC<MainNavProps> = ({ items }) => {
 								</Link>
 							),
 					)}
-				</nav>
+				</>
 			) : null}
 		</div>
 	);
