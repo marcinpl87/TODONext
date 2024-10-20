@@ -1,54 +1,46 @@
-import Link from 'next/link';
-import { Github, LogOut } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { Menu } from 'lucide-react';
 import { siteConfig } from '../config';
-import { useDispatchLogin, useLogin } from '../hooks';
 import { Button } from './ui/button';
 import MainNav from './MainNav';
-import ThemeToggle from './ThemeToggle';
-import MyAvatar from './MyAvatar';
-import { LOGIN_ACTIONS } from '../types';
+import SiteHeaderIcons from './SiteHeaderIcons';
 
 const SiteHeader: React.FC = () => {
-	const login = useLogin();
-	const dispatchLogin = useDispatchLogin();
+	const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
 	return (
-		<header className="bg-background sticky top-0 z-40 w-full border-b">
-			<div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-				<MainNav items={siteConfig.mainNav} />
-				<div className="flex flex-1 items-center justify-end space-x-4">
-					<nav className="flex items-center space-x-1">
-						<Link
-							href={siteConfig.links.github}
-							target="_blank"
-							rel="noreferrer"
-						>
-							<Button size="icon" variant="ghost">
-								<Github className="h-5 w-5" />
-								<span className="sr-only">GitHub</span>
-							</Button>
-						</Link>
-						<ThemeToggle />
+		<nav className="bg-background sticky top-0 z-40 w-full border-b">
+			<div className="items-center px-5 max-w-screen-xl mx-auto md:flex">
+				<div className="flex items-center justify-between py-3 md:py-5 md:block">
+					<div className="md:hidden">
 						<Button
+							className="p-2"
 							variant="ghost"
-							size="icon"
 							onClick={() =>
-								dispatchLogin({
-									action: LOGIN_ACTIONS.LOGOUT,
-									userId: '',
-									userName: '',
-								})
+								setIsExpanded(prevState => !prevState)
 							}
-							title={`Logout ${login.userName} (${login.userId})`}
 						>
-							<LogOut className="size-5" />
-							<span className="sr-only">Log out</span>
+							<Menu />
 						</Button>
-						<MyAvatar name={login.userName} />
-					</nav>
+					</div>
+					<div className="flex md:hidden flex-1 items-center justify-end space-x-4">
+						<SiteHeaderIcons />
+					</div>
+				</div>
+				<div
+					className={`flex-1 justify-self-center pb-3 md:block md:pb-0 ${
+						isExpanded ? 'block' : 'hidden'
+					}`}
+				>
+					<MainNav items={siteConfig.mainNav} />
+				</div>
+				<div className="hidden md:flex flex-1 py-3 items-center justify-end space-x-4">
+					<SiteHeaderIcons />
 				</div>
 			</div>
-		</header>
+		</nav>
 	);
 };
 
