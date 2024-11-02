@@ -1,3 +1,4 @@
+import { sql } from '@vercel/postgres';
 import { type NextRequest, NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { LS_KEY_USERS } from '@/consts';
@@ -19,10 +20,25 @@ export const POST = async (request: NextRequest) => {
 	) {
 		const user = redisUser.find(user => user.name === data.get('username'));
 		if (user && user.pass === data.get('password')) {
-			return NextResponse.json(
-				{ message: 'OK', userId: user.id, userName: user.name },
-				{ status: 200 },
-			);
+			try {
+				await sql`
+					INSERT INTO logs (UserId, Action, Datetime)
+					VALUES (
+						${user.id},
+						'login',
+						${new Date().toLocaleString('sv-SE').slice(0, -3)}
+					);
+				`;
+				return NextResponse.json(
+					{ message: 'OK', userId: user.id, userName: user.name },
+					{ status: 200 },
+				);
+			} catch (error) {
+				return NextResponse.json(
+					{ message: 'Wrong password' },
+					{ status: 403 },
+				);
+			}
 		} else {
 			return NextResponse.json(
 				{ message: 'Wrong password' },

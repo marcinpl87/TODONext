@@ -206,7 +206,9 @@ const TodoItem: React.FC<TodoItemProps> = ({
 						<MyAvatar />
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold">{todo.title}</div>
+						<div className="text-2xl font-bold break-words">
+							{todo.title}
+						</div>
 						<p className="text-md text-muted-foreground whitespace-pre-line break-words py-1">
 							{todo.description}
 						</p>
