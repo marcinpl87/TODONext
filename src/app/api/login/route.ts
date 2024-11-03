@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
 		if (user && user.pass === data.get('password')) {
 			try {
 				await sql`
-					INSERT INTO logs (UserId, Action, Datetime)
+					INSERT INTO log (userId, action, datetime)
 					VALUES (
 						${user.id},
 						'login',

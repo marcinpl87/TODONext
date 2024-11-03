@@ -7,11 +7,12 @@ import InputText from '../components/InputText';
 import ProjectCreate from '../components/ProjectCreate';
 import ProjectItem from '../components/ProjectItem';
 import LoadingIcon from '../components/LoadingIcon';
-import { useRedisStorage } from '../hooks';
+import { useLogin, useRedisStorage } from '../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../consts';
 import type { Project, Todo } from '../types';
 
 const Home: React.FC = () => {
+	const login = useLogin();
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const [isProjectLoading, lsProjects, setLsProjects] =
 		useRedisStorage<Project[]>(LS_KEY_PROJECTS);
@@ -76,6 +77,14 @@ const Home: React.FC = () => {
 				setLsProjects(data[LS_KEY_PROJECTS], () => {
 					textEl.value = '';
 					forceUpdate();
+				});
+				fetch('/api/project', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						userId: login.userId,
+						projects: data[LS_KEY_PROJECTS],
+					}),
 				});
 			}
 			if (data[LS_KEY_TODOS]) {
