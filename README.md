@@ -40,3 +40,29 @@ $ npm install --save-dev @typescript-eslint/eslint-plugin eslint-config-prettier
 Editor: Format On Save Mode - checked
 Editor: Default Formatter - set to Prettier
 ```
+
+## DB tables structure
+
+```
+CREATE TABLE "public"."project" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "userId" uuid,
+    "title" varchar,
+    "description" text,
+    "creationTimestamp" timestamp DEFAULT NOW()
+);
+```
+
+```
+CREATE TABLE "public"."todo" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "userId" uuid,
+    "projectId" uuid,
+    "title" varchar,
+    "description" text,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "estimatedTime" integer DEFAULT 0,
+    "isDone" boolean DEFAULT false,
+    "doneTimestamp" timestamp DEFAULT null
+);
+```

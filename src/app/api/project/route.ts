@@ -7,7 +7,10 @@ export const POST = async (request: NextRequest) => {
 	if (data && data.userId && data.projects && data.projects.length > 0) {
 		data.projects.map(async (project: Project) => {
 			await sql`
-				INSERT INTO project (id, userId, title, description)
+				DELETE FROM project;
+			`; // clear the table to override data during import
+			await sql`
+				INSERT INTO project ("id", "userId", "title", "description")
 				VALUES (
 					${project.id},
 					${data.userId},
@@ -16,6 +19,7 @@ export const POST = async (request: NextRequest) => {
 				);
 			`;
 		});
+		// TODO: INSERT TO TABLE todo
 	}
 
 	return NextResponse.json({ message: 'OK' }, { status: 200 });
