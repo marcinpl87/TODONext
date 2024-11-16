@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	CalendarPlus,
 	CircleCheckBig,
@@ -26,9 +26,43 @@ import { Textarea } from '../../components/ui/textarea';
 import IconButton from '../../components/IconButton';
 import MyAvatar from '../../components/MyAvatar';
 
+const FileUpload: React.FC = () => {
+	const [fileContent, setFileContent] = useState<string>('No file selected');
+	const handleFileChange = (
+		event: React.ChangeEvent<HTMLInputElement>,
+	): void => {
+		const file = event.target.files?.[0];
+		if (file && file.type === 'text/plain') {
+			const reader = new FileReader();
+			reader.onload = (e: ProgressEvent<FileReader>) => {
+				setFileContent(e.target?.result?.toString() || '');
+			};
+			reader.readAsText(file);
+		} else {
+			setFileContent('Please select a valid text file.');
+		}
+	};
+
+	return (
+		<div className="mt-5">
+			<input type="file" accept=".txt" onChange={handleFileChange} />
+			<div className="mt-5">
+				<h3>File Contents:</h3>
+				<pre className="max-h-72 overflow-y-auto">{fileContent}</pre>
+			</div>
+		</div>
+	);
+};
+
 const Home: React.FC = () => {
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
+			<h1 className="my-5 text-2xl font-bold">File upload</h1>
+			<Card className="w-full max-w-4xl mb-5">
+				<CardContent>
+					<FileUpload />
+				</CardContent>
+			</Card>
 			<h1 className="my-5 text-2xl font-bold">Card</h1>
 			<Card className="w-full max-w-4xl mb-5">
 				<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
