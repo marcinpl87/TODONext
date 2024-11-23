@@ -70,7 +70,7 @@ export const useDispatchLogin = () => useContext(LoginDispatchContext);
 
 export const useRedisStorage = <T,>(
 	key: string,
-): [boolean, T | [], (data: T, callback: () => void) => void] => {
+): [boolean, T | [], (data: T, callback?: () => void) => void] => {
 	const endpoint = '/api/data';
 	const [data, setData] = useState<T | []>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -94,7 +94,7 @@ export const useRedisStorage = <T,>(
 
 	const setStoredArr = async (
 		data: T,
-		callback: () => void,
+		callback?: () => void,
 	): Promise<void> => {
 		const loaderWrapper = document.querySelector('.loader');
 		const loaderClass = 'loader--active';
@@ -103,7 +103,9 @@ export const useRedisStorage = <T,>(
 			method: 'POST',
 			body: JSON.stringify({ key, data }),
 		});
-		callback();
+		if (typeof callback === 'function') {
+			callback();
+		}
 		setData(data);
 		loaderWrapper?.classList.remove(loaderClass);
 	};

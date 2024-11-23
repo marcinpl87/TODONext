@@ -45,7 +45,7 @@ Editor: Default Formatter - set to Prettier
 
 ```
 CREATE TABLE "public"."project" (
-    "id" uuid DEFAULT gen_random_uuid(),
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     "userId" uuid,
     "title" varchar,
     "description" text,
@@ -55,7 +55,7 @@ CREATE TABLE "public"."project" (
 
 ```
 CREATE TABLE "public"."todo" (
-    "id" uuid DEFAULT gen_random_uuid(),
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     "userId" uuid,
     "projectId" uuid,
     "title" varchar,
