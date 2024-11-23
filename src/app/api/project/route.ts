@@ -3,7 +3,7 @@ import { Project } from '../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
-	const data = await request.json();
+	const data: { userId: string, projects: Project[] } = await request.json();
 	if (data && data.userId && data.projects && data.projects.length > 0) {
 		data.projects.map(async (project: Project) => {
 			await sql`
@@ -19,7 +19,6 @@ export const POST = async (request: NextRequest) => {
 				);
 			`;
 		});
-		// TODO: INSERT TO TABLE todo
 	}
 
 	return NextResponse.json({ message: 'OK' }, { status: 200 });

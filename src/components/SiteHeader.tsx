@@ -30,7 +30,7 @@ const SiteHeader: React.FC = () => {
 					</div>
 				</div>
 				<div
-					className={`flex-1 justify-self-center pb-3 md:block md:pb-0 ${
+					className={`flex-1 justify-self-left pb-3 md:block md:pb-0 ${
 						isExpanded ? 'block' : 'hidden'
 					}`}
 				>
