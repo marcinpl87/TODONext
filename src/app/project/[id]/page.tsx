@@ -45,10 +45,10 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 			},
 		);
 	};
-	const removeTodo = (id: string) => {
+	const removeTodo = (id: string, title: string) => {
 		if (
 			confirm(
-				'Are you sure you want to remove this TODO (the TODO will be permanently deleted) ?',
+				`Are you sure you want to remove "${title}" (the TODO will be permanently deleted) ?`,
 			)
 		) {
 			setLsTodos(

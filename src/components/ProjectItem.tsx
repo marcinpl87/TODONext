@@ -11,7 +11,7 @@ import type { Project } from '../types';
 type ProjectItemProps = {
 	project: Project;
 	updateProject: (project: Project, callback: () => void) => void;
-	removeProject: (id: string) => void;
+	removeProject: (id: string, title: string) => void;
 };
 
 const ProjectItem: React.FC<ProjectItemProps> = ({
@@ -46,7 +46,7 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 	};
 
 	const handleRemove = () => {
-		removeProject(project.id);
+		removeProject(project.id, project.title);
 	};
 
 	return (

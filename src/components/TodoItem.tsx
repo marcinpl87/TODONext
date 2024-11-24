@@ -12,7 +12,7 @@ import MyAvatar from './MyAvatar';
 type TodoItemProps = {
 	todo: Todo;
 	updateTodo: (todo: Todo, callback: () => void) => void;
-	removeTodo: (id: string) => void;
+	removeTodo: (id: string, title: string) => void;
 };
 
 const TodoItem: React.FC<TodoItemProps> = ({
@@ -133,7 +133,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	};
 
 	const handleRemove = () => {
-		removeTodo(todo.id);
+		removeTodo(todo.id, todo.title);
 	};
 
 	const [timer, setTimer] = useState<string>(
