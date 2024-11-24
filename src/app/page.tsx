@@ -34,6 +34,14 @@ const Home: React.FC = () => {
 			callback();
 			forceUpdate();
 		});
+		fetch('/api/project', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: login.userId,
+				project,
+			}),
+		});
 	};
 
 	const updateProject = (updatedProject: Project, callback: () => void) => {
@@ -48,10 +56,10 @@ const Home: React.FC = () => {
 		);
 	};
 
-	const removeProject = (id: string) => {
+	const removeProject = (id: string, title: string) => {
 		if (
 			confirm(
-				'Are you sure you want to remove this Project (the Project will be permanently deleted) ?',
+				`Are you sure you want to remove "${title}" (the Project will be permanently deleted) ?`,
 			)
 		) {
 			setLsProjects(
@@ -78,7 +86,7 @@ const Home: React.FC = () => {
 					textEl.value = '';
 					forceUpdate();
 				});
-				fetch('/api/project', {
+				fetch('/api/project/import', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
@@ -92,7 +100,7 @@ const Home: React.FC = () => {
 					textEl.value = '';
 					forceUpdate();
 				});
-				fetch('/api/todo', {
+				fetch('/api/todo/import', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({

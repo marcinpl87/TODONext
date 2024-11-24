@@ -3,22 +3,27 @@ import { Project } from '../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
-	const data: { userId: string, projects: Project[] } = await request.json();
-	if (data && data.userId && data.projects && data.projects.length > 0) {
-		data.projects.map(async (project: Project) => {
-			await sql`
-				DELETE FROM project;
-			`; // clear the table to override data during import
-			await sql`
-				INSERT INTO project ("id", "userId", "title", "description")
-				VALUES (
-					${project.id},
-					${data.userId},
-					${project.title},
-					${project.description}
-				);
-			`;
-		});
+	const data: { userId: string; project: Project } = await request.json();
+	if (data && data.userId && data.project) {
+		await sql.query(
+			`INSERT INTO project (
+				"id",
+				"userId",
+				"title",
+				"description",
+				"creationTimestamp"
+			) 
+			VALUES ($1, $2, $3, $4, to_timestamp($5));`,
+			[
+				data.project.id,
+				data.userId,
+				data.project.title,
+				data.project.description,
+				data.project.creationTimestamp
+					? data.project.creationTimestamp / 1000
+					: 0,
+			],
+		);
 	}
 
 	return NextResponse.json({ message: 'OK' }, { status: 200 });

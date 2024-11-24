@@ -9,7 +9,7 @@ type TodoListProps = {
 	filterFn: (todo: Todo) => boolean;
 	sortFn: (a: Todo, b: Todo) => number;
 	updateTodo: (todo: Todo, callback: () => void) => void;
-	removeTodo: (id: string) => void;
+	removeTodo: (id: string, title: string) => void;
 };
 
 const TodoList: React.FC<TodoListProps> = ({
