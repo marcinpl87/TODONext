@@ -54,6 +54,14 @@ const Home: React.FC = () => {
 				forceUpdate();
 			},
 		);
+		fetch(`/api/project/${updatedProject.id}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: login.userId,
+				project: updatedProject,
+			}),
+		});
 	};
 
 	const removeProject = (id: string, title: string) => {

@@ -25,29 +25,18 @@ export const POST = async (request: NextRequest) => {
 			],
 		);
 	}
-
 	return NextResponse.json({ message: 'OK' }, { status: 200 });
 };
 
-export const GET = async (request: NextRequest) => {
-	// const { searchParams } = new URL(request.url);
-	// const key = searchParams.get('key');
-	// TODO: Implement searchParams and if ID is in searchParams, return only that project
+export const GET = async () => {
 	const data = await sql`
 		SELECT
 			"id",
 			"userId",
 			"title",
 			"description",
-			to_char(
-				"creationTimestamp" at time zone '+01',
-				'YYYY-MM-DD HH24:MI:SS'
-			) AS creationTimestamp
+			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		FROM project;
 	`;
-
-	return NextResponse.json(
-		{ url: request.url, data: data.rows },
-		{ status: 200 },
-	);
+	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

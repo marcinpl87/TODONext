@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
 import LoadingIcon from '@/components/LoadingIcon';
-import { useRedisStorage } from '../../../hooks';
+import { useLogin, useRedisStorage } from '../../../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../../../consts';
 import type { Project, Todo } from '../../../types';
 
@@ -14,6 +14,7 @@ type TodosProps = {
 };
 
 const Todos: React.FC<TodosProps> = ({ params }) => {
+	const login = useLogin();
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const projectId = params.id;
 	const [isTodoLoading, lsTodos, setLsTodos] =
@@ -32,6 +33,14 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 		setLsTodos([...lsTodos, todo], () => {
 			callback();
 			forceUpdate();
+		});
+		fetch('/api/todo', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: login.userId,
+				todo,
+			}),
 		});
 	};
 	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
