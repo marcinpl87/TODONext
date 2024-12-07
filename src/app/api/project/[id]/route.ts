@@ -41,3 +41,22 @@ export const GET = async (
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
 };
+
+export const DELETE = async (
+	request: NextRequest,
+	{ params }: { params: { id: string } },
+) => {
+	const { id } = params;
+	if (id) {
+		await sql`
+			DELETE FROM project
+			WHERE "id" = ${id};
+		`; // remove project
+		await sql`
+			DELETE FROM todo
+			WHERE "projectId" = ${id};
+		`; // remove all todos inside the project
+		return NextResponse.json({ message: 'OK' }, { status: 200 });
+	}
+	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
+};

@@ -53,6 +53,14 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				forceUpdate();
 			},
 		);
+		fetch(`/api/todo/${updatedTodo.id}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: login.userId,
+				todo: updatedTodo,
+			}),
+		});
 	};
 	const removeTodo = (id: string, title: string) => {
 		if (
@@ -65,6 +73,10 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				forceUpdate,
 			);
 		}
+		fetch(`/api/todo/${id}`, {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+		});
 	};
 
 	return (
