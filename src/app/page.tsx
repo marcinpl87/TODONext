@@ -78,6 +78,10 @@ const Home: React.FC = () => {
 				lsTodos.filter(todo => todo.projectId !== id),
 				forceUpdate,
 			);
+			fetch(`/api/project/${id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+			});
 		}
 	};
 
