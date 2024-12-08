@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import LoadingPage from '../components/LoadingPage';
+import ScrollTopButton from '../components/ScrollTopButton';
 import { cn, fontSans } from '../utils';
 import { LoginProvider } from '../hooks';
 import '../globals.scss';
@@ -34,6 +35,7 @@ export default function RootLayout({
 						<LoadingPage />
 						<LoginProvider>{children}</LoginProvider>
 					</main>
+					<ScrollTopButton />
 				</ThemeProvider>
 			</body>
 		</html>
