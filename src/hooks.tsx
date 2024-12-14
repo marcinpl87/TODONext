@@ -11,7 +11,13 @@ import {
 } from 'react';
 import SiteHeader from './components/SiteHeader';
 import LoginForm from './components/LoginForm';
-import { LOGIN_ACTIONS, type LoginDispatch, type LoginState } from './types';
+import {
+	Todo,
+	Project,
+	LOGIN_ACTIONS,
+	type LoginState,
+	type LoginDispatch,
+} from './types';
 
 const LoginContext = createContext<LoginState>({
 	isLoggedIn: false,
@@ -111,4 +117,66 @@ export const useRedisStorage = <T,>(
 	};
 
 	return [isLoading, data, setStoredArr] as const;
+};
+
+export const useProjects = () => {
+	const [projects, setProjects] = useState<Project[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	useEffect(() => {
+		const fetchProjects = async () => {
+			setIsLoading(true);
+			setError(null);
+			try {
+				const response = await fetch('/api/project');
+				if (!response.ok) {
+					throw new Error('Failed to fetch projects');
+				}
+				const data = await response.json();
+				setProjects(data?.data || []);
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else {
+					setError('An unknown error occurred');
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchProjects();
+	}, []);
+
+	return { projects, isLoading, error };
+};
+
+export const useTodos = () => {
+	const [todos, setTodos] = useState<Todo[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	useEffect(() => {
+		const fetchTodos = async () => {
+			setIsLoading(true);
+			setError(null);
+			try {
+				const response = await fetch('/api/todo');
+				if (!response.ok) {
+					throw new Error('Failed to fetch todos');
+				}
+				const data = await response.json();
+				setTodos(data?.data || []);
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else {
+					setError('An unknown error occurred');
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchTodos();
+	}, []);
+
+	return { todos, isLoading, error };
 };
