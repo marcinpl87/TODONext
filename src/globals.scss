@@ -2,6 +2,10 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+html {
+	scrollbar-gutter: stable; // vertical scrollbar always reserves space, preventing layout shifts when content overflows
+}
+
 @layer base {
 	:root {
 		--background: 0 0% 100%;

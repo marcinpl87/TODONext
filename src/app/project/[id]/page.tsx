@@ -5,9 +5,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
 import LoadingIcon from '@/components/LoadingIcon';
-import { useLogin, useRedisStorage } from '../../../hooks';
-import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../../../consts';
-import type { Project, Todo } from '../../../types';
+import { useLogin, useProjects, useTodos } from '../../../hooks';
+import type { Todo } from '../../../types';
 
 type TodosProps = {
 	params: { id: string };
@@ -17,10 +16,8 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 	const login = useLogin();
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const projectId = params.id;
-	const [isTodoLoading, lsTodos, setLsTodos] =
-		useRedisStorage<Todo[]>(LS_KEY_TODOS);
-	const [isProjectLoading, lsProjects] =
-		useRedisStorage<Project[]>(LS_KEY_PROJECTS);
+	const { projects: lsProjects, isLoading: isProjectLoading } = useProjects();
+	const { todos: lsTodos, isLoading: isTodoLoading } = useTodos();
 
 	if (isProjectLoading || isTodoLoading) {
 		return (
@@ -30,10 +27,6 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 
 	const selectedProject = lsProjects.filter(p => p.id === projectId)[0];
 	const addTodo = (todo: Todo, callback: () => void) => {
-		setLsTodos([...lsTodos, todo], () => {
-			callback();
-			forceUpdate();
-		});
 		fetch('/api/todo', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -41,18 +34,12 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				userId: login.userId,
 				todo,
 			}),
+		}).then(() => {
+			callback();
+			forceUpdate();
 		});
 	};
 	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
-		setLsTodos(
-			lsTodos.map(todo =>
-				todo.id === updatedTodo.id ? updatedTodo : todo,
-			),
-			() => {
-				callback();
-				forceUpdate();
-			},
-		);
 		fetch(`/api/todo/${updatedTodo.id}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
@@ -60,6 +47,9 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				userId: login.userId,
 				todo: updatedTodo,
 			}),
+		}).then(() => {
+			callback();
+			forceUpdate();
 		});
 	};
 	const removeTodo = (id: string, title: string) => {
@@ -68,15 +58,13 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				`Are you sure you want to remove "${title}" (the TODO will be permanently deleted) ?`,
 			)
 		) {
-			setLsTodos(
-				lsTodos.filter(todo => todo.id !== id),
-				forceUpdate,
-			);
+			fetch(`/api/todo/${id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+			}).then(() => {
+				forceUpdate();
+			});
 		}
-		fetch(`/api/todo/${id}`, {
-			method: 'DELETE',
-			headers: { 'Content-Type': 'application/json' },
-		});
 	};
 
 	return (

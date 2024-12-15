@@ -7,18 +7,16 @@ import InputText from '../components/InputText';
 import ProjectCreate from '../components/ProjectCreate';
 import ProjectItem from '../components/ProjectItem';
 import LoadingIcon from '../components/LoadingIcon';
-import { useLogin, useRedisStorage } from '../hooks';
+import { useProjects, useLogin, useTodos } from '../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../consts';
 import type { Project, Todo } from '../types';
 
 const Home: React.FC = () => {
 	const login = useLogin();
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
-	const [isProjectLoading, lsProjects, setLsProjects] =
-		useRedisStorage<Project[]>(LS_KEY_PROJECTS);
-	const [isTodoLoading, lsTodos, setLsTodos] =
-		useRedisStorage<Todo[]>(LS_KEY_TODOS);
-	const exportData: Record<string, object> = {};
+	const { projects: lsProjects, isLoading: isProjectLoading } = useProjects();
+	const { todos: lsTodos, isLoading: isTodoLoading } = useTodos();
+	const exportData: Record<string, Array<Project | Todo>> = {};
 
 	if (isProjectLoading || isTodoLoading) {
 		return (
@@ -30,10 +28,6 @@ const Home: React.FC = () => {
 	exportData[LS_KEY_TODOS] = lsTodos;
 
 	const addProject = (project: Project, callback: () => void) => {
-		setLsProjects([...lsProjects, project], () => {
-			callback();
-			forceUpdate();
-		});
 		fetch('/api/project', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -41,19 +35,13 @@ const Home: React.FC = () => {
 				userId: login.userId,
 				project,
 			}),
+		}).then(() => {
+			callback();
+			forceUpdate();
 		});
 	};
 
 	const updateProject = (updatedProject: Project, callback: () => void) => {
-		setLsProjects(
-			lsProjects.map(project =>
-				project.id === updatedProject.id ? updatedProject : project,
-			),
-			() => {
-				callback();
-				forceUpdate();
-			},
-		);
 		fetch(`/api/project/${updatedProject.id}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
@@ -61,6 +49,9 @@ const Home: React.FC = () => {
 				userId: login.userId,
 				project: updatedProject,
 			}),
+		}).then(() => {
+			callback();
+			forceUpdate();
 		});
 	};
 
@@ -70,14 +61,6 @@ const Home: React.FC = () => {
 				`Are you sure you want to remove "${title}" (the Project will be permanently deleted) ?`,
 			)
 		) {
-			setLsProjects(
-				lsProjects.filter(project => project.id !== id),
-				forceUpdate,
-			);
-			setLsTodos(
-				lsTodos.filter(todo => todo.projectId !== id),
-				forceUpdate,
-			);
 			fetch(`/api/project/${id}`, {
 				method: 'DELETE',
 				headers: { 'Content-Type': 'application/json' },
@@ -94,10 +77,6 @@ const Home: React.FC = () => {
 		if (textEl?.value) {
 			const data = JSON.parse(textEl.value);
 			if (data[LS_KEY_PROJECTS]) {
-				setLsProjects(data[LS_KEY_PROJECTS], () => {
-					textEl.value = '';
-					forceUpdate();
-				});
 				fetch('/api/project/import', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -108,10 +87,6 @@ const Home: React.FC = () => {
 				});
 			}
 			if (data[LS_KEY_TODOS]) {
-				setLsTodos(data[LS_KEY_TODOS], () => {
-					textEl.value = '';
-					forceUpdate();
-				});
 				fetch('/api/todo/import', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },

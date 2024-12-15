@@ -190,13 +190,13 @@ const TodoItem: React.FC<TodoItemProps> = ({
 							{todo.creationTimestamp && (
 								<>
 									<MyTimeAgo
-										millis={todo.creationTimestamp}
+										millis={+todo.creationTimestamp}
 									/>
 									{todo.isDone && todo.doneTimestamp && (
 										<>
 											{' - '}
 											<MyTimeAgo
-												millis={todo.doneTimestamp}
+												millis={+todo.doneTimestamp}
 											/>
 										</>
 									)}
