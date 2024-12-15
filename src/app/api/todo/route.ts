@@ -48,7 +48,8 @@ export const GET = async () => {
 			"estimatedTime",
 			"isDone",
 			(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
-		FROM todo;
+		FROM todo
+		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };
