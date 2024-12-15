@@ -36,7 +36,8 @@ export const GET = async () => {
 			"title",
 			"description",
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
-		FROM project;
+		FROM project
+		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

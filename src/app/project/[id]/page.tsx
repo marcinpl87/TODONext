@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
@@ -14,19 +14,15 @@ type TodosProps = {
 
 const Todos: React.FC<TodosProps> = ({ params }) => {
 	const login = useLogin();
-	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const projectId = params.id;
 	const { projects: lsProjects, isLoading: isProjectLoading } = useProjects();
 	const { todos: lsTodos, isLoading: isTodoLoading } = useTodos();
-
-	if (isProjectLoading || isTodoLoading) {
-		return (
-			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-		);
-	}
-
+	const [todosState, setTodosState] = useState<Todo[]>([]);
 	const selectedProject = lsProjects.filter(p => p.id === projectId)[0];
 	const addTodo = (todo: Todo, callback: () => void) => {
+		const cache = [...todosState];
+		setTodosState([todo, ...todosState]);
+		callback();
 		fetch('/api/todo', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -34,12 +30,18 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				userId: login.userId,
 				todo,
 			}),
-		}).then(() => {
-			callback();
-			forceUpdate();
+		}).catch(() => {
+			setTodosState([...cache]); // revert back to the previous state
 		});
 	};
 	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
+		const cache = [...todosState];
+		setTodosState([
+			...todosState.map(todo =>
+				todo.id === updatedTodo.id ? updatedTodo : todo,
+			),
+		]);
+		callback();
 		fetch(`/api/todo/${updatedTodo.id}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
@@ -47,9 +49,8 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				userId: login.userId,
 				todo: updatedTodo,
 			}),
-		}).then(() => {
-			callback();
-			forceUpdate();
+		}).catch(() => {
+			setTodosState([...cache]); // revert back to the previous state
 		});
 	};
 	const removeTodo = (id: string, title: string) => {
@@ -58,14 +59,26 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 				`Are you sure you want to remove "${title}" (the TODO will be permanently deleted) ?`,
 			)
 		) {
+			const cache = [...todosState];
+			setTodosState([...todosState.filter(todo => todo.id !== id)]);
 			fetch(`/api/todo/${id}`, {
 				method: 'DELETE',
 				headers: { 'Content-Type': 'application/json' },
-			}).then(() => {
-				forceUpdate();
+			}).catch(() => {
+				setTodosState([...cache]); // revert back to the previous state
 			});
 		}
 	};
+
+	useEffect(() => {
+		setTodosState(lsTodos);
+	}, [lsTodos]);
+
+	if (isProjectLoading || isTodoLoading) {
+		return (
+			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
 
 	return (
 		<>
@@ -83,7 +96,7 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 						<TodoCreate addTodo={addTodo} projectId={projectId} />
 					</div>
 					<TodoList
-						todos={lsTodos}
+						todos={todosState}
 						filterFn={t => t.projectId === projectId && !t.isDone}
 						sortFn={(a, b) =>
 							(b.creationTimestamp || 0) -
@@ -92,14 +105,15 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 						updateTodo={updateTodo}
 						removeTodo={removeTodo}
 					/>
-					{lsTodos.filter(t => t.projectId === projectId && t.isDone)
-						.length > 0 && (
+					{todosState.filter(
+						t => t.projectId === projectId && t.isDone,
+					).length > 0 && (
 						<h1 className="flex flex-col items-center max-w-4xl m-auto text-2xl font-bold mb-5">
 							DONE
 						</h1>
 					)}
 					<TodoList
-						todos={lsTodos}
+						todos={todosState}
 						filterFn={t => t.projectId === projectId && t.isDone}
 						sortFn={(a, b) =>
 							(b.doneTimestamp || 0) - (a.doneTimestamp || 0)

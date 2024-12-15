@@ -24,8 +24,8 @@ const Home: React.FC = () => {
 		);
 	}
 
-	exportData[LS_KEY_PROJECTS] = lsProjects;
-	exportData[LS_KEY_TODOS] = lsTodos;
+	exportData[LS_KEY_PROJECTS] = [...lsProjects].reverse(); // reverse to import the oldest first
+	exportData[LS_KEY_TODOS] = [...lsTodos].reverse(); // reverse to import the oldest first
 
 	const addProject = (project: Project, callback: () => void) => {
 		fetch('/api/project', {
