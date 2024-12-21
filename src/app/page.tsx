@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import InputText from '../components/InputText';
@@ -13,21 +13,17 @@ import type { Project, Todo } from '../types';
 
 const Home: React.FC = () => {
 	const login = useLogin();
-	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const { projects: lsProjects, isLoading: isProjectLoading } = useProjects();
+	const [projectsState, setProjectsState] = useState<Project[]>([]);
 	const { todos: lsTodos, isLoading: isTodoLoading } = useTodos();
-	const exportData: Record<string, Array<Project | Todo>> = {};
-
-	if (isProjectLoading || isTodoLoading) {
-		return (
-			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-		);
-	}
-
-	exportData[LS_KEY_PROJECTS] = [...lsProjects].reverse(); // reverse to import the oldest first
-	exportData[LS_KEY_TODOS] = [...lsTodos].reverse(); // reverse to import the oldest first
-
+	const exportData: Record<string, Array<Project | Todo>> = {
+		[LS_KEY_PROJECTS]: [...projectsState].reverse(), // reverse to import the oldest first
+		[LS_KEY_TODOS]: [...lsTodos].reverse(), // reverse to import the oldest first
+	};
 	const addProject = (project: Project, callback: () => void) => {
+		const cache = [...projectsState];
+		setProjectsState([project, ...projectsState]);
+		callback();
 		fetch('/api/project', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -35,13 +31,18 @@ const Home: React.FC = () => {
 				userId: login.userId,
 				project,
 			}),
-		}).then(() => {
-			callback();
-			forceUpdate();
+		}).catch(() => {
+			setProjectsState([...cache]); // revert back to the previous state
 		});
 	};
-
 	const updateProject = (updatedProject: Project, callback: () => void) => {
+		const cache = [...projectsState];
+		setProjectsState([
+			...projectsState.map(project =>
+				project.id === updatedProject.id ? updatedProject : project,
+			),
+		]);
+		callback();
 		fetch(`/api/project/${updatedProject.id}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
@@ -49,29 +50,31 @@ const Home: React.FC = () => {
 				userId: login.userId,
 				project: updatedProject,
 			}),
-		}).then(() => {
-			callback();
-			forceUpdate();
+		}).catch(() => {
+			setProjectsState([...cache]); // revert back to the previous state
 		});
 	};
-
 	const removeProject = (id: string, title: string) => {
 		if (
 			confirm(
 				`Are you sure you want to remove "${title}" (the Project will be permanently deleted) ?`,
 			)
 		) {
+			const cache = [...projectsState];
+			setProjectsState([
+				...projectsState.filter(project => project.id !== id),
+			]);
 			fetch(`/api/project/${id}`, {
 				method: 'DELETE',
 				headers: { 'Content-Type': 'application/json' },
+			}).catch(() => {
+				setProjectsState([...cache]); // revert back to the previous state
 			});
 		}
 	};
-
 	const onExport = () => {
 		navigator.clipboard.writeText(JSON.stringify(exportData));
 	};
-
 	const onImport = () => {
 		const textEl = document?.getElementById('import') as HTMLInputElement;
 		if (textEl?.value) {
@@ -99,11 +102,21 @@ const Home: React.FC = () => {
 		}
 	};
 
+	useEffect(() => {
+		setProjectsState(lsProjects);
+	}, [lsProjects]);
+
+	if (isProjectLoading || isTodoLoading) {
+		return (
+			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
+
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="text-2xl font-bold my-5">Projects</h1>
 			<ProjectCreate addProject={addProject} />
-			{lsProjects
+			{projectsState
 				.sort(
 					(a, b) =>
 						(b.creationTimestamp || 0) - (a.creationTimestamp || 0),
