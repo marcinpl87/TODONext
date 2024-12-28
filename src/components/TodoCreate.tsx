@@ -2,6 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useLogin } from '../hooks';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import TodoForm from './TodoForm';
@@ -14,6 +15,7 @@ type TodoCreateProps = {
 };
 
 const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
+	const login = useLogin();
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
@@ -25,6 +27,7 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 		addTodo(
 			{
 				id: uuidv4(),
+				userId: login.userId,
 				projectId: projectId || '',
 				title,
 				date: startDate || null,

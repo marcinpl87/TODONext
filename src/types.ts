@@ -29,6 +29,7 @@ export type LoginState = {
 
 export type Project = {
 	id: string;
+	userId: string;
 	title: string;
 	description: string;
 	creationTimestamp: number;
@@ -39,6 +40,7 @@ export type Todo = {
 	date: Date | null | undefined;
 	title: string;
 	isDone: boolean;
+	userId: string;
 	projectId: string;
 	description: string;
 	estimatedTime: number;
