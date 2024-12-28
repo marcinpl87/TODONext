@@ -3,8 +3,8 @@ import { Todo } from '../../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
-	const data: { userId: string; todos: Todo[] } = await request.json();
-	if (data && data.userId && data.todos && data.todos.length > 0) {
+	const data: { todos: Todo[] } = await request.json();
+	if (data && data.todos && data.todos.length > 0) {
 		await sql`DELETE FROM todo;`; // clear the table to override data during import
 		data.todos.map(async (todo: Todo) => {
 			await sql.query(
@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
 				VALUES ($1, $2, $3, $4, $5, to_timestamp($6), $7, $8, to_timestamp($9));`,
 				[
 					todo.id,
-					data.userId,
+					todo.userId,
 					todo.projectId,
 					todo.title,
 					todo.description,

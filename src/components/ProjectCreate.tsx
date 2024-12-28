@@ -2,6 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useLogin } from '../hooks';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import ProjectForm from './ProjectForm';
@@ -12,6 +13,7 @@ type ProjectCreateProps = {
 };
 
 const ProjectCreate: React.FC<ProjectCreateProps> = ({ addProject }) => {
+	const login = useLogin();
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
@@ -21,6 +23,7 @@ const ProjectCreate: React.FC<ProjectCreateProps> = ({ addProject }) => {
 		addProject(
 			{
 				id: uuidv4(),
+				userId: login.userId,
 				title,
 				description,
 				creationTimestamp: Date.now(),

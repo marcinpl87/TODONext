@@ -3,8 +3,8 @@ import { Project } from '../../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
-	const data: { userId: string; projects: Project[] } = await request.json();
-	if (data && data.userId && data.projects && data.projects.length > 0) {
+	const data: { projects: Project[] } = await request.json();
+	if (data && data.projects && data.projects.length > 0) {
 		data.projects.map(async (project: Project) => {
 			await sql`
 				DELETE FROM project;
@@ -13,7 +13,7 @@ export const POST = async (request: NextRequest) => {
 				INSERT INTO project ("id", "userId", "title", "description")
 				VALUES (
 					${project.id},
-					${data.userId},
+					${project.userId},
 					${project.title},
 					${project.description}
 				);

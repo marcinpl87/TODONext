@@ -84,7 +84,6 @@ const Home: React.FC = () => {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						userId: login.userId,
 						projects: data[LS_KEY_PROJECTS],
 					}),
 				});
@@ -94,7 +93,6 @@ const Home: React.FC = () => {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
-						userId: login.userId,
 						todos: data[LS_KEY_TODOS],
 					}),
 				});
