@@ -1,24 +1,25 @@
 import { sql } from '@vercel/postgres';
 import { type NextRequest, NextResponse } from 'next/server';
-import { Redis } from '@upstash/redis';
-import { LS_KEY_USERS } from '@/consts';
 
 export const POST = async (request: NextRequest) => {
 	const data = await request.formData();
-	const redis = new Redis({
-		url: process.env.UPSTASH_REDIS_REST_URL,
-		token: process.env.UPSTASH_REDIS_REST_TOKEN,
-	});
-	const redisUser: Record<string, string>[] | null =
-		await redis.get(LS_KEY_USERS);
+	const dbData = await sql`
+		SELECT
+			"id",
+			"name",
+			"pass"
+		FROM public.user;
+	`;
 
 	if (
-		redisUser &&
-		redisUser.length > 0 &&
+		dbData?.rows &&
+		dbData.rows.length > 0 &&
 		data.get('username') &&
 		data.get('password')
 	) {
-		const user = redisUser.find(user => user.name === data.get('username'));
+		const user = dbData.rows.find(
+			user => user.name === data.get('username'),
+		);
 		if (user && user.pass === data.get('password')) {
 			try {
 				await sql`
@@ -30,7 +31,15 @@ export const POST = async (request: NextRequest) => {
 					);
 				`;
 				return NextResponse.json(
-					{ message: 'OK', userId: user.id, userName: user.name },
+					{
+						message: 'OK',
+						userId: user.id,
+						userName: user.name,
+						users: dbData.rows.map(u => {
+							delete u.pass; // remove passwords
+							return u;
+						}),
+					},
 					{ status: 200 },
 				);
 			} catch (error) {

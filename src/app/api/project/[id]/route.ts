@@ -28,15 +28,15 @@ export const GET = async (
 	const { id } = params;
 	if (id) {
 		const data = await sql`
-            SELECT
-                "id",
-                "userId",
-                "title",
-                "description",
+			SELECT
+				"id",
+				"userId",
+				"title",
+				"description",
 				(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
-            FROM project
-            WHERE "id" = ${id};
-        `;
+			FROM project
+			WHERE "id" = ${id};
+		`;
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });

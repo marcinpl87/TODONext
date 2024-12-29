@@ -43,7 +43,7 @@ export const GET = async (
 	const { id } = params;
 	if (id) {
 		const data = await sql`
-            SELECT
+			SELECT
 				"id",
 				"userId",
 				"projectId",
@@ -53,9 +53,9 @@ export const GET = async (
 				"estimatedTime",
 				"isDone",
 				(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
-            FROM todo
-            WHERE "id" = ${id};
-        `;
+			FROM todo
+			WHERE "id" = ${id};
+		`;
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
