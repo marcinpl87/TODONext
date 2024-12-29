@@ -44,6 +44,15 @@ Editor: Default Formatter - set to Prettier
 ## DB tables structure
 
 ```
+CREATE TABLE "public"."user" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "name" varchar,
+    "pass" varchar,
+    "creationTimestamp" timestamp DEFAULT NOW()
+);
+```
+
+```
 CREATE TABLE "public"."project" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     "userId" uuid,
