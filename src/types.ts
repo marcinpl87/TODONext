@@ -19,12 +19,14 @@ export type LoginDispatch = {
 	action: LOGIN_ACTIONS;
 	userId: string;
 	userName: string;
+	users: UserObject[];
 };
 
 export type LoginState = {
 	isLoggedIn: boolean;
 	userId: string;
 	userName: string;
+	users: UserObject[];
 };
 
 export type Project = {
@@ -35,6 +37,8 @@ export type Project = {
 	creationTimestamp: number;
 };
 
+export type Subtasks = { data: { task: string; isDone: boolean }[] };
+
 export type Todo = {
 	id: string;
 	date: Date | null | undefined;
@@ -43,6 +47,7 @@ export type Todo = {
 	userId: string;
 	projectId: string;
 	description: string;
+	subtasks: Subtasks;
 	estimatedTime: number;
 	doneTimestamp: number;
 	creationTimestamp: number;

@@ -35,6 +35,7 @@ const SiteHeaderIcons: React.FC = () => {
 						action: LOGIN_ACTIONS.LOGOUT,
 						userId: '',
 						userName: '',
+						users: [],
 					})
 				}
 				title={`Logout ${login.userName} (${login.userId})`}

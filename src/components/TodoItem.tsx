@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import TodoForm from './TodoForm';
 import TodoTimer from './TodoTimer';
 import TodoControls from './TodoControls';
-import type { Todo } from '../types';
 import MyTimeAgo from './MyTimeAgo';
 import MyAvatar from './MyAvatar';
+import { useLogin } from '../hooks';
+import type { Todo } from '../types';
 
 type TodoItemProps = {
 	todo: Todo;
@@ -20,12 +21,16 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	updateTodo,
 	removeTodo,
 }) => {
+	const login = useLogin();
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const timerComponentRef = useRef<HTMLDivElement>(null);
 	const intervalRef = useRef<NodeJS.Timeout | null>(null); // because dealing with JS setInterval to keep track of it
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>(todo.title);
 	const [description, setDescription] = useState<string>(todo.description);
+	const [subtasks, setSubtasks] = useState<string[]>(
+		todo?.subtasks?.data?.map(s => s.task) || [''],
+	);
 	const [estimatedTime, setEstimatedTime] = useState<number>(
 		todo.estimatedTime,
 	);
@@ -149,6 +154,8 @@ const TodoItem: React.FC<TodoItemProps> = ({
 					setTitle={setTitle}
 					description={description}
 					setDescription={setDescription}
+					subtasks={subtasks}
+					setSubtasks={setSubtasks}
 					startDate={startDate}
 					setStartDate={setStartDate}
 					estimatedTime={estimatedTime}
@@ -187,23 +194,34 @@ const TodoItem: React.FC<TodoItemProps> = ({
 									{' | '}
 								</>
 							)}
-							{todo.creationTimestamp && (
-								<>
-									<MyTimeAgo
-										millis={+todo.creationTimestamp}
-									/>
-									{todo.isDone && todo.doneTimestamp && (
-										<>
-											{' - '}
-											<MyTimeAgo
-												millis={+todo.doneTimestamp}
-											/>
-										</>
-									)}
-								</>
-							)}
+							{todo.creationTimestamp &&
+								+todo.creationTimestamp > 0 && (
+									<>
+										<MyTimeAgo
+											millis={+todo.creationTimestamp}
+										/>
+										{todo.isDone &&
+											todo.doneTimestamp &&
+											+todo.doneTimestamp > 0 && (
+												<>
+													{' - '}
+													<MyTimeAgo
+														millis={
+															+todo.doneTimestamp
+														}
+													/>
+												</>
+											)}
+									</>
+								)}
 						</CardTitle>
-						<MyAvatar />
+						<MyAvatar
+							name={
+								login.users.find(
+									user => user.id === todo.userId,
+								)?.name || ''
+							}
+						/>
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl font-bold break-words">
@@ -212,6 +230,15 @@ const TodoItem: React.FC<TodoItemProps> = ({
 						<p className="text-md text-muted-foreground whitespace-pre-line break-words py-1">
 							{todo.description}
 						</p>
+						{subtasks.filter(Boolean).length > 0 && (
+							<div className="text-md text-muted-foreground whitespace-pre-line break-words py-1">
+								{subtasks
+									.filter(Boolean)
+									.map((subtask, index) => (
+										<p key={index}>✔️ {subtask}</p>
+									))}
+							</div>
+						)}
 						<TodoControls
 							todo={todo}
 							timer={timer}

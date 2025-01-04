@@ -12,18 +12,20 @@ export const POST = async (request: NextRequest) => {
 					"projectId",
 					"title",
 					"description",
+					"subtasks",
 					"creationTimestamp",
 					"estimatedTime",
 					"isDone",
 					"doneTimestamp"
 				) 
-				VALUES ($1, $2, $3, $4, $5, to_timestamp($6), $7, $8, to_timestamp($9));`,
+				VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), $8, $9, to_timestamp($10));`,
 			[
 				data.todo.id,
 				data.userId,
 				data.todo.projectId,
 				data.todo.title,
 				data.todo.description,
+				data.todo.subtasks,
 				data.todo.creationTimestamp
 					? data.todo.creationTimestamp / 1000
 					: 0,
@@ -44,6 +46,7 @@ export const GET = async () => {
 			"projectId",
 			"title",
 			"description",
+			"subtasks",
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp",
 			"estimatedTime",
 			"isDone",
