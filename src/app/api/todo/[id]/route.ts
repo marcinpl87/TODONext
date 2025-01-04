@@ -13,16 +13,18 @@ export const PATCH = async (
 			`UPDATE todo SET
 			"title" = $3,
 			"description" = $4,
-			"creationTimestamp" = to_timestamp($5),
-			"estimatedTime" = $6,
-			"isDone" = $7,
-			"doneTimestamp" = to_timestamp($8)
+			"subtasks" = $5,
+			"creationTimestamp" = to_timestamp($6),
+			"estimatedTime" = $7,
+			"isDone" = $8,
+			"doneTimestamp" = to_timestamp($9)
 			WHERE "id" = $1 AND "userId" = $2;`,
 			[
 				id,
 				data.userId,
 				data.todo.title,
 				data.todo.description,
+				data.todo.subtasks,
 				data.todo.creationTimestamp
 					? data.todo.creationTimestamp / 1000
 					: 0,
@@ -49,6 +51,7 @@ export const GET = async (
 				"projectId",
 				"title",
 				"description",
+				"subtasks",
 				(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp",
 				"estimatedTime",
 				"isDone",

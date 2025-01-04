@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react';
 import DatePicker from 'react-datepicker';
 import { DATE_FORMAT } from '../consts';
 import { Label } from './ui/label';
@@ -8,6 +8,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
+import DynamicInputsList from './DynamicInputsList';
 
 type TodoFormProps = {
 	header: string;
@@ -15,6 +16,8 @@ type TodoFormProps = {
 	setTitle: (value: React.SetStateAction<string>) => void;
 	description: string;
 	setDescription: (value: React.SetStateAction<string>) => void;
+	subtasks: string[];
+	setSubtasks: Dispatch<SetStateAction<string[]>>;
 	estimatedTime: number;
 	setEstimatedTime: (value: React.SetStateAction<number>) => void;
 	startDate: Date | null | undefined;
@@ -31,6 +34,8 @@ const TodoForm: React.FC<TodoFormProps> = ({
 	setTitle,
 	description,
 	setDescription,
+	subtasks,
+	setSubtasks,
 	estimatedTime,
 	setEstimatedTime,
 	startDate,
@@ -64,6 +69,13 @@ const TodoForm: React.FC<TodoFormProps> = ({
 					onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
 						setDescription(e.target.value)
 					}
+				/>
+			</div>
+			<div className="grid gap-2">
+				<DynamicInputsList
+					label="Subtasks"
+					inputs={subtasks}
+					setInputs={setSubtasks}
 				/>
 			</div>
 			<div className="grid gap-2">

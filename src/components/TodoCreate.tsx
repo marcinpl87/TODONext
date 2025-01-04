@@ -19,6 +19,7 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [title, setTitle] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
+	const [subtasks, setSubtasks] = useState<string[]>(['']);
 	const [estimatedTime, setEstimatedTime] = useState<number>(DEFAULT_TIMEOUT);
 	const [startDate, setStartDate] = useState<Date | null>();
 
@@ -32,6 +33,11 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 				title,
 				date: startDate || null,
 				description,
+				subtasks: {
+					data: subtasks
+						.filter(Boolean)
+						.map(task => ({ task, isDone: false })),
+				},
 				estimatedTime,
 				isDone: false,
 				doneTimestamp: 0,
@@ -40,6 +46,7 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 			() => {
 				setTitle('');
 				setDescription('');
+				setSubtasks(['']);
 				setEstimatedTime(DEFAULT_TIMEOUT);
 				setIsOpened(false);
 			},
@@ -60,6 +67,8 @@ const TodoCreate: React.FC<TodoCreateProps> = ({ addTodo, projectId }) => {
 						setTitle={setTitle}
 						description={description}
 						setDescription={setDescription}
+						subtasks={subtasks}
+						setSubtasks={setSubtasks}
 						startDate={startDate}
 						setStartDate={setStartDate}
 						estimatedTime={estimatedTime}

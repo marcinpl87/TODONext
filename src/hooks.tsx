@@ -23,6 +23,7 @@ const LoginContext = createContext<LoginState>({
 	isLoggedIn: false,
 	userId: '',
 	userName: '',
+	users: [],
 });
 const LoginDispatchContext = createContext<Dispatch<LoginDispatch>>(() => null);
 
@@ -33,9 +34,10 @@ const loginReducer = (state: LoginState, loginDispatchData: LoginDispatch) => {
 				isLoggedIn: true,
 				userId: loginDispatchData.userId,
 				userName: loginDispatchData.userName,
+				users: loginDispatchData.users || [],
 			};
 		case LOGIN_ACTIONS.LOGOUT:
-			return { isLoggedIn: false, userId: '', userName: '' };
+			return { isLoggedIn: false, userId: '', userName: '', users: [] };
 		default:
 			throw new Error(
 				`Unknown action: ${JSON.stringify(loginDispatchData)}`,
@@ -50,6 +52,7 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 		isLoggedIn: false,
 		userId: '',
 		userName: '',
+		users: [],
 	});
 	return (
 		<LoginDispatchContext.Provider value={dispatch}>
