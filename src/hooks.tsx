@@ -74,51 +74,6 @@ export const LoginProviderWrapper = ({ children }: { children: ReactNode }) => {
 export const useLogin = () => useContext(LoginContext);
 export const useDispatchLogin = () => useContext(LoginDispatchContext);
 
-export const useRedisStorage = <T,>(
-	key: string,
-): [boolean, T | [], (data: T, callback?: () => void) => void] => {
-	const endpoint = '/api/data';
-	const [data, setData] = useState<T | []>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await fetch(
-					`${endpoint}?${new URLSearchParams({ key }).toString()}`,
-				);
-				const result = await response.json();
-				setData(result?.data ? result.data || [] : []);
-			} catch (error) {
-				console.error('Error fetching data:', error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-		fetchData();
-	}, [key]);
-
-	const setStoredArr = async (
-		data: T,
-		callback?: () => void,
-	): Promise<void> => {
-		const loaderWrapper = document.querySelector('.loader');
-		const loaderClass = 'loader--active';
-		loaderWrapper?.classList.add(loaderClass);
-		await fetch(endpoint, {
-			method: 'POST',
-			body: JSON.stringify({ key, data }),
-		});
-		if (typeof callback === 'function') {
-			callback();
-		}
-		setData(data);
-		loaderWrapper?.classList.remove(loaderClass);
-	};
-
-	return [isLoading, data, setStoredArr] as const;
-};
-
 export const useProjects = () => {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
