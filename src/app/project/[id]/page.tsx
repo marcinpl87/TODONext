@@ -34,7 +34,11 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 			setTodosState([...cache]); // revert back to the previous state
 		});
 	};
-	const updateTodo = (updatedTodo: Todo, callback: () => void) => {
+	const updateTodo = (
+		updatedTodo: Todo,
+		callback: () => void,
+		errorCallback?: () => void,
+	) => {
 		const cache = [...todosState];
 		setTodosState([
 			...todosState.map(todo =>
@@ -51,6 +55,9 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 			}),
 		}).catch(() => {
 			setTodosState([...cache]); // revert back to the previous state
+			errorCallback &&
+				typeof errorCallback === 'function' &&
+				errorCallback();
 		});
 	};
 	const removeTodo = (id: string, title: string) => {

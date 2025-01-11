@@ -25,6 +25,7 @@ import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import IconButton from '../../components/IconButton';
 import MyAvatar from '../../components/MyAvatar';
+import DynamicInputsList from '../../components/DynamicInputsList';
 
 const FileUpload: React.FC = () => {
 	const [fileContent, setFileContent] = useState<string>('No file selected');
@@ -54,51 +55,23 @@ const FileUpload: React.FC = () => {
 	);
 };
 
-const DynamicInputsList: React.FC = () => {
-	const [inputs, setInputs] = useState<string[]>(['']);
-
-	const handleChange = (index: number, value: string) => {
-		setInputs(prevInputs => {
-			let newInputs = [...prevInputs];
-			newInputs[index] = value;
-			newInputs = newInputs.filter(
-				(item, i) => item.trim() !== '' || i === newInputs.length - 1,
-			); // filter out empty items except the last one
-			if (newInputs[newInputs.length - 1] !== '') {
-				newInputs.push('');
-			} // ensure there is always an empty input at the end
-			return newInputs;
-		});
-	};
+const Test: React.FC = () => {
+	const [subtasks, setSubtasks] = useState<string[]>(['']);
 
 	return (
-		<>
+		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="my-5 text-2xl font-bold">Form</h1>
 			<Card className="w-full max-w-4xl mb-5">
 				<CardHeader>
 					<div className="grid gap-2">
-						<Label>Define subtasks</Label>
-						{inputs.map((input, index) => (
-							<Input
-								key={index}
-								type="text"
-								value={input}
-								onChange={e =>
-									handleChange(index, e.target.value)
-								}
-							/>
-						))}
+						<DynamicInputsList
+							label="Define subtasks"
+							inputs={subtasks}
+							setInputs={setSubtasks}
+						/>
 					</div>
 				</CardHeader>
 			</Card>
-		</>
-	);
-};
-
-const Home: React.FC = () => {
-	return (
-		<div className="flex flex-col items-center max-w-4xl m-auto">
-			<DynamicInputsList />
 			<h1 className="mb-5 text-2xl font-bold">File upload</h1>
 			<Card className="w-full max-w-4xl mb-5">
 				<CardContent>
@@ -181,4 +154,4 @@ const Home: React.FC = () => {
 	);
 };
 
-export default Home;
+export default Test;
