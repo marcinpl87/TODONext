@@ -8,11 +8,16 @@ import TodoControls from './TodoControls';
 import MyTimeAgo from './MyTimeAgo';
 import MyAvatar from './MyAvatar';
 import { useLogin } from '../hooks';
+import { SUBTASK_DONE_MARKER } from '../consts';
 import type { Todo } from '../types';
 
 type TodoItemProps = {
 	todo: Todo;
-	updateTodo: (todo: Todo, callback: () => void) => void;
+	updateTodo: (
+		todo: Todo,
+		callback: () => void,
+		errorCallback?: () => void,
+	) => void;
 	removeTodo: (id: string, title: string) => void;
 };
 
@@ -29,8 +34,14 @@ const TodoItem: React.FC<TodoItemProps> = ({
 	const [title, setTitle] = useState<string>(todo.title);
 	const [description, setDescription] = useState<string>(todo.description);
 	const [subtasks, setSubtasks] = useState<string[]>(
-		todo?.subtasks?.data?.map(s => s.task) || [''],
-	);
+		(
+			todo?.subtasks?.data
+				?.map(s =>
+					s.isDone ? `${SUBTASK_DONE_MARKER}${s.task}` : s.task,
+				)
+				.filter(Boolean) || []
+		).concat(''),
+	); // empty subtask at the end to allow user to add more
 	const [estimatedTime, setEstimatedTime] = useState<number>(
 		todo.estimatedTime,
 	);
@@ -82,6 +93,14 @@ const TodoItem: React.FC<TodoItemProps> = ({
 				...todo,
 				title,
 				description,
+				subtasks: {
+					data: subtasks.filter(Boolean).map(task => ({
+						task: task.startsWith(SUBTASK_DONE_MARKER)
+							? task.slice(2)
+							: task,
+						isDone: task.startsWith(SUBTASK_DONE_MARKER),
+					})),
+				},
 				estimatedTime,
 				date: startDate,
 			},
@@ -122,6 +141,41 @@ const TodoItem: React.FC<TodoItemProps> = ({
 		if (timerComponentRef.current) {
 			(timerComponentRef.current as any).onClickStop();
 		}
+	};
+
+	const toggleSubtask = (subtaskContent: string) => {
+		let subtasksToSave: string[] = [];
+		const subtasksCache: string[] = [...subtasks];
+		setSubtasks(prevSubtasks => {
+			subtasksToSave = prevSubtasks.map(subtask => {
+				if (subtask === subtaskContent) {
+					if (subtask.startsWith(SUBTASK_DONE_MARKER)) {
+						return subtask.slice(2); // Remove SUBTASK_DONE_MARKER if it exists
+					} else {
+						return `${SUBTASK_DONE_MARKER}${subtask}`; // Add SUBTASK_DONE_MARKER if it doesn't exist
+					}
+				}
+				return subtask;
+			});
+			return subtasksToSave;
+		});
+		updateTodo(
+			{
+				...todo,
+				subtasks: {
+					data: subtasksToSave.filter(Boolean).map(task => ({
+						task: task.startsWith(SUBTASK_DONE_MARKER)
+							? task.slice(2)
+							: task,
+						isDone: task.startsWith(SUBTASK_DONE_MARKER),
+					})),
+				},
+			},
+			() => {},
+			() => {
+				setSubtasks(subtasksCache);
+			},
+		);
 	};
 
 	const toggleDone = () => {
@@ -235,7 +289,31 @@ const TodoItem: React.FC<TodoItemProps> = ({
 								{subtasks
 									.filter(Boolean)
 									.map((subtask, index) => (
-										<p key={index}>✔️ {subtask}</p>
+										<>
+											<label
+												key={index}
+												className="cursor-pointer inline-flex"
+												onChange={() => {
+													toggleSubtask(subtask);
+												}}
+											>
+												<input
+													type="checkbox"
+													checked={subtask.startsWith(
+														SUBTASK_DONE_MARKER,
+													)}
+													readOnly
+												/>
+												<span className="ml-1 mb-0.5">
+													{subtask.startsWith(
+														SUBTASK_DONE_MARKER,
+													)
+														? subtask.slice(2)
+														: subtask}
+												</span>
+											</label>
+											<br />
+										</>
 									))}
 							</div>
 						)}

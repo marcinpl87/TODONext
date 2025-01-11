@@ -69,6 +69,7 @@ CREATE TABLE "public"."todo" (
     "projectId" uuid,
     "title" varchar,
     "description" text,
+    "subtasks" jsonb,
     "creationTimestamp" timestamp DEFAULT NOW(),
     "estimatedTime" integer DEFAULT 0,
     "isDone" boolean DEFAULT false,

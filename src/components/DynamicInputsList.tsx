@@ -4,11 +4,17 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
-const DynamicInputsList: React.FC<{
+type DynamicInputsListProps = {
 	label: string;
 	inputs: string[];
 	setInputs: Dispatch<SetStateAction<string[]>>;
-}> = ({ label, inputs, setInputs }) => {
+};
+
+const DynamicInputsList: React.FC<DynamicInputsListProps> = ({
+	label,
+	inputs,
+	setInputs,
+}) => {
 	const handleChange = (index: number, value: string) => {
 		setInputs(prevInputs => {
 			let newInputs = [...prevInputs];
