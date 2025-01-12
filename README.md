@@ -76,3 +76,108 @@ CREATE TABLE "public"."todo" (
     "doneTimestamp" timestamp DEFAULT null
 );
 ```
+
+```
+CREATE TABLE "public"."tenant" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "name" varchar,
+    "senderName" text,
+    "idNumber" varchar,
+    "nationalInsuranceNumber" varchar,
+    "birthDate" varchar,
+    "email" varchar,
+    "phone" varchar,
+    "address" varchar,
+    "roomId" uuid,
+    "apartmentId" uuid,
+    "rent" integer,
+    "rentFirstMonth" varchar,
+    "rentFirstRent" integer,
+    "deposit" integer,
+    "account" varchar,
+    "accountDeposit" varchar,
+    "iceName" varchar,
+    "iceLastname" varchar,
+    "iceIdNumber" varchar,
+    "iceNationalInsuranceNumber" varchar,
+    "iceEmail" varchar,
+    "icePhone" varchar,
+    "iceAddress" varchar,
+    "insuranceName" varchar,
+    "insuranceNumber" varchar,
+    "insuranceDate" varchar,
+    "contractDate" varchar,
+    "contractDateStart" varchar,
+    "contractDateEnd" varchar,
+    "contractDateHandoff" varchar,
+    "notes" text,
+    "isContract" boolean DEFAULT false,
+    "isDeposit" boolean DEFAULT false,
+    "is1stRent" boolean DEFAULT false,
+    "isInsurance" boolean DEFAULT false,
+    "isWarranty" boolean DEFAULT false,
+    "isKey" boolean DEFAULT false,
+    "isProtocol" boolean DEFAULT false,
+    "status" integer
+);
+```
+
+```
+CREATE TABLE "public"."property" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "name" varchar,
+    "address" varchar,
+    "floor" integer,
+    "code" varchar,
+    "wifiSsid" varchar,
+    "wifiPass" varchar,
+    "rooms" integer,
+    "lockIn" varchar,
+    "lockOut" varchar,
+    "safe" varchar,
+    "insuranceName" varchar,
+    "insuranceDate" varchar,
+    "insuranceNumber" varchar,
+    "notes" text
+);
+```
+
+```
+CREATE TABLE "public"."transaction" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "dateTimestamp" timestamp NULL DEFAULT NULL,
+    "dateTransaction" varchar,
+    "dateAccounting" varchar,
+    "sender" varchar,
+    "receiver" varchar,
+    "title" varchar,
+    "value" integer,
+    "currency" varchar,
+    "value2" integer,
+    "currency2" varchar,
+    "senderAccount" varchar,
+    "receiverAccount" varchar,
+    "categoryId" uuid
+);
+```
+
+```
+CREATE TABLE "public"."transaction_category" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "name" varchar,
+    "color" varchar
+);
+```
+
+```
+CREATE TABLE "public"."transaction_rule" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "transactionColumn" integer,
+    "relation" integer,
+    "value" text,
+    "categoryId" uuid
+);
+```
