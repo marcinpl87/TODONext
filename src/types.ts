@@ -52,3 +52,22 @@ export type Todo = {
 	doneTimestamp: number;
 	creationTimestamp: number;
 };
+
+export type Property = {
+	id: string;
+	creationTimestamp: number;
+	name: string;
+	address: string;
+	floor: number;
+	code: string;
+	wifiSsid: string;
+	wifiPass: string;
+	rooms: number;
+	lockIn: string;
+	lockOut: string;
+	safe: string;
+	insuranceName: string;
+	insuranceDate: string;
+	insuranceNumber: string;
+	notes: string;
+};
