@@ -1,14 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { siteConfig } from '../config';
 import { Button } from './ui/button';
 import MainNav from './MainNav';
 import SiteHeaderIcons from './SiteHeaderIcons';
 
 const SiteHeader: React.FC = () => {
+	const pathname = usePathname();
 	const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+	useEffect(() => {
+		setIsExpanded(false);
+	}, [pathname]); // close the menu when navigating
 
 	return (
 		<nav className="bg-background sticky top-0 z-40 w-full border-b">
