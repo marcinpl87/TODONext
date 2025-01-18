@@ -289,9 +289,8 @@ const TodoItem: React.FC<TodoItemProps> = ({
 								{subtasks
 									.filter(Boolean)
 									.map((subtask, index) => (
-										<>
+										<React.Fragment key={index}>
 											<label
-												key={index}
 												className="cursor-pointer inline-flex"
 												onChange={() => {
 													toggleSubtask(subtask);
@@ -313,7 +312,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
 												</span>
 											</label>
 											<br />
-										</>
+										</React.Fragment>
 									))}
 							</div>
 						)}
