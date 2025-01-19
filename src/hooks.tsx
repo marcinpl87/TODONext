@@ -12,9 +12,10 @@ import {
 import SiteHeader from './components/SiteHeader';
 import LoginForm from './components/LoginForm';
 import {
-	Todo,
-	Project,
 	LOGIN_ACTIONS,
+	type Todo,
+	type Project,
+	type Property,
 	type LoginState,
 	type LoginDispatch,
 } from './types';
@@ -137,4 +138,35 @@ export const useTodos = () => {
 	}, []);
 
 	return { todos, isLoading, error };
+};
+
+export const useProperties = () => {
+	const [properties, setProperties] = useState<Property[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	useEffect(() => {
+		const fetchProperties = async () => {
+			setIsLoading(true);
+			setError(null);
+			try {
+				const response = await fetch('/api/property');
+				if (!response.ok) {
+					throw new Error('Failed to fetch properties');
+				}
+				const data = await response.json();
+				setProperties(data?.data || []);
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else {
+					setError('An unknown error occurred');
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchProperties();
+	}, []);
+
+	return { properties, isLoading, error };
 };
