@@ -15,6 +15,7 @@ import {
 	LOGIN_ACTIONS,
 	type Todo,
 	type Project,
+	type Tenant,
 	type Property,
 	type LoginState,
 	type LoginDispatch,
@@ -76,6 +77,7 @@ export const LoginProviderWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export const useLogin = () => useContext(LoginContext);
+
 export const useDispatchLogin = () => useContext(LoginDispatchContext);
 
 export const useProjects = () => {
@@ -169,4 +171,35 @@ export const useProperties = () => {
 	}, []);
 
 	return { properties, isLoading, error };
+};
+
+export const useTenants = () => {
+	const [tenants, setTenants] = useState<Tenant[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	useEffect(() => {
+		const fetchTenants = async () => {
+			setIsLoading(true);
+			setError(null);
+			try {
+				const response = await fetch('/api/tenant');
+				if (!response.ok) {
+					throw new Error('Failed to fetch tenants');
+				}
+				const data = await response.json();
+				setTenants(data?.data || []);
+			} catch (err) {
+				if (err instanceof Error) {
+					setError(err.message);
+				} else {
+					setError('An unknown error occurred');
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		fetchTenants();
+	}, []);
+
+	return { tenants, isLoading, error };
 };
