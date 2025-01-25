@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import InputText from '../components/InputText';
 import ProjectCreate from '../components/ProjectCreate';
 import ProjectItem from '../components/ProjectItem';
-import LoadingIcon from '../components/LoadingIcon';
+import LoadingIconTwo from '../components/LoadingIconTwo';
 import { useProjects, useLogin, useTodos } from '../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../consts';
 import type { Project, Todo } from '../types';
@@ -106,7 +106,7 @@ const Home: React.FC = () => {
 
 	if (isProjectLoading || isTodoLoading) {
 		return (
-			<LoadingIcon className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+			<LoadingIconTwo className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
 		);
 	}
 
