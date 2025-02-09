@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { cn } from '../utils';
 import { siteConfig } from '../config';
 import type { NavItem } from '../types';
