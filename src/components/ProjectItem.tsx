@@ -2,7 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { PenLine, Trash } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { Card, CardContent } from './ui/card';
 import ProjectForm from './ProjectForm';
 import IconButton from './IconButton';
