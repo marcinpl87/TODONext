@@ -22,6 +22,24 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [name, setName] = useState<string>(property.name);
 	const [address, setAddress] = useState<string>(property.address);
+	const [floor, setFloor] = useState<number>(property.floor);
+	const [code, setCode] = useState<string>(property.code);
+	const [wifiSsid, setWifiSsid] = useState<string>(property.wifiSsid);
+	const [wifiPass, setWifiPass] = useState<string>(property.wifiPass);
+	const [rooms, setRooms] = useState<number>(property.rooms);
+	const [lockIn, setLockIn] = useState<string>(property.lockIn);
+	const [lockOut, setLockOut] = useState<string>(property.lockOut);
+	const [safe, setSafe] = useState<string>(property.safe);
+	const [insuranceName, setInsuranceName] = useState<string>(
+		property.insuranceName,
+	);
+	const [insuranceDate, setInsuranceDate] = useState<string>(
+		property.insuranceDate,
+	);
+	const [insuranceNumber, setInsuranceNumber] = useState<string>(
+		property.insuranceNumber,
+	);
+	const [notes, setNotes] = useState<string>(property.notes);
 
 	const handleEdit = () => {
 		setIsEditing(true);
@@ -34,6 +52,18 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
 				...property,
 				name,
 				address,
+				floor,
+				code,
+				wifiSsid,
+				wifiPass,
+				rooms,
+				lockIn,
+				lockOut,
+				safe,
+				insuranceName,
+				insuranceDate,
+				insuranceNumber,
+				notes,
 			},
 			() => {
 				setIsEditing(false);
@@ -58,6 +88,30 @@ const PropertyItem: React.FC<PropertyItemProps> = ({
 					setName={setName}
 					address={address}
 					setAddress={setAddress}
+					floor={floor}
+					setFloor={setFloor}
+					code={code}
+					setCode={setCode}
+					wifiSsid={wifiSsid}
+					setWifiSsid={setWifiSsid}
+					wifiPass={wifiPass}
+					setWifiPass={setWifiPass}
+					rooms={rooms}
+					setRooms={setRooms}
+					lockIn={lockIn}
+					setLockIn={setLockIn}
+					lockOut={lockOut}
+					setLockOut={setLockOut}
+					safe={safe}
+					setSafe={setSafe}
+					insuranceName={insuranceName}
+					setInsuranceName={setInsuranceName}
+					insuranceDate={insuranceDate}
+					setInsuranceDate={setInsuranceDate}
+					insuranceNumber={insuranceNumber}
+					setInsuranceNumber={setInsuranceNumber}
+					notes={notes}
+					setNotes={setNotes}
 					handleCancel={handleCancel}
 					handleSubmit={handleSubmit}
 				/>
