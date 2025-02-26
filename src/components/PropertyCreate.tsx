@@ -15,6 +15,18 @@ const PropertyCreate: React.FC<PropertyCreateProps> = ({ addProperty }) => {
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [name, setName] = useState<string>('');
 	const [address, setAddress] = useState<string>('');
+	const [floor, setFloor] = useState<number>(1);
+	const [code, setCode] = useState<string>('');
+	const [wifiSsid, setWifiSsid] = useState<string>('');
+	const [wifiPass, setWifiPass] = useState<string>('');
+	const [rooms, setRooms] = useState<number>(1);
+	const [lockIn, setLockIn] = useState<string>('');
+	const [lockOut, setLockOut] = useState<string>('');
+	const [safe, setSafe] = useState<string>('');
+	const [insuranceName, setInsuranceName] = useState<string>('');
+	const [insuranceDate, setInsuranceDate] = useState<string>('');
+	const [insuranceNumber, setInsuranceNumber] = useState<string>('');
+	const [notes, setNotes] = useState<string>('');
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -23,23 +35,35 @@ const PropertyCreate: React.FC<PropertyCreateProps> = ({ addProperty }) => {
 				id: uuidv4(),
 				name,
 				address,
-				floor: 1,
-				code: '',
-				wifiSsid: '',
-				wifiPass: '',
-				rooms: 1,
-				lockIn: '',
-				lockOut: '',
-				safe: '',
+				floor,
+				code,
+				wifiSsid,
+				wifiPass,
+				rooms,
+				lockIn,
+				lockOut,
+				safe,
 				creationTimestamp: Date.now(),
-				insuranceName: '',
-				insuranceDate: '',
-				insuranceNumber: '',
-				notes: '',
+				insuranceName,
+				insuranceDate,
+				insuranceNumber,
+				notes,
 			},
 			() => {
 				setName('');
 				setAddress('');
+				setFloor(0);
+				setCode('');
+				setWifiSsid('');
+				setWifiPass('');
+				setRooms(0);
+				setLockIn('');
+				setLockOut('');
+				setSafe('');
+				setInsuranceName('');
+				setInsuranceDate('');
+				setInsuranceNumber('');
+				setNotes('');
 				setIsOpened(false);
 			},
 		);
@@ -59,6 +83,30 @@ const PropertyCreate: React.FC<PropertyCreateProps> = ({ addProperty }) => {
 						setName={setName}
 						address={address}
 						setAddress={setAddress}
+						floor={floor}
+						setFloor={setFloor}
+						code={code}
+						setCode={setCode}
+						wifiSsid={wifiSsid}
+						setWifiSsid={setWifiSsid}
+						wifiPass={wifiPass}
+						setWifiPass={setWifiPass}
+						rooms={rooms}
+						setRooms={setRooms}
+						lockIn={lockIn}
+						setLockIn={setLockIn}
+						lockOut={lockOut}
+						setLockOut={setLockOut}
+						safe={safe}
+						setSafe={setSafe}
+						insuranceName={insuranceName}
+						setInsuranceName={setInsuranceName}
+						insuranceDate={insuranceDate}
+						setInsuranceDate={setInsuranceDate}
+						insuranceNumber={insuranceNumber}
+						setInsuranceNumber={setInsuranceNumber}
+						notes={notes}
+						setNotes={setNotes}
 						handleCancel={handleCancel}
 						handleSubmit={handleSubmit}
 					/>
