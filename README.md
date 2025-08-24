@@ -18,6 +18,16 @@ $ npm run dev -- -H 10.0.2.15
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Sync Vercel ENV variables
+
+### 1. Go to Vercel Dashboard → Your Project → Settings → Environment Variables and add a new variable
+
+### 2. Sync variables to your localhost
+
+```bash
+$ vercel env pull .env.development.local
+```
+
 ## Next.js Installation & Configuration
 
 ### 1. Install Next.js
