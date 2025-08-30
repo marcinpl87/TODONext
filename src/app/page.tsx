@@ -26,7 +26,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch('/api/project', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				project,
@@ -45,7 +48,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch(`/api/project/${updatedProject.id}`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				project: updatedProject,
@@ -66,7 +72,10 @@ const Home: React.FC = () => {
 			]);
 			fetch(`/api/project/${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
 			}).catch(() => {
 				setProjectsState([...cache]); // revert back to the previous state
 			});
@@ -82,7 +91,10 @@ const Home: React.FC = () => {
 			if (data[LS_KEY_PROJECTS]) {
 				fetch('/api/project/import', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
 						projects: data[LS_KEY_PROJECTS],
 					}),
@@ -91,7 +103,10 @@ const Home: React.FC = () => {
 			if (data[LS_KEY_TODOS]) {
 				fetch('/api/todo/import', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
 						todos: data[LS_KEY_TODOS],
 					}),

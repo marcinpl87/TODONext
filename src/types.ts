@@ -115,3 +115,10 @@ export type Tenant = {
 	isProtocol: boolean;
 	status: number;
 };
+
+export type BankTransaction = {
+	date: string;
+	amount: string;
+	creditor: string;
+	description: string;
+};

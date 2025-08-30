@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwa from 'jwa';
+import type { BankTransaction } from '../../../types';
 
 const SESSION_DATA = process.env.BANK_SESSION_DATA || '';
 const PRIVATE_KEY = process.env.BANK_PRIVATE_KEY || '';
@@ -61,12 +62,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 		headers: psuHeaders,
 	});
 	const transactions = JSON.parse(await accountTransactionsResponse.text());
-	const returnArray: {
-		date: string;
-		amount: string;
-		creditor: string;
-		description: string;
-	}[] = [];
+	const returnArray: BankTransaction[] = [];
 	if (transactions?.transactions?.length > 0) {
 		transactions?.transactions.forEach(
 			(tr: {

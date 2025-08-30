@@ -25,7 +25,10 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 		callback();
 		fetch('/api/todo', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				todo,
@@ -48,7 +51,10 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 		callback();
 		fetch(`/api/todo/${updatedTodo.id}`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				todo: updatedTodo,
@@ -70,7 +76,10 @@ const Todos: React.FC<TodosProps> = ({ params }) => {
 			setTodosState([...todosState.filter(todo => todo.id !== id)]);
 			fetch(`/api/todo/${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
 			}).catch(() => {
 				setTodosState([...cache]); // revert back to the previous state
 			});

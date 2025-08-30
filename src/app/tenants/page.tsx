@@ -17,7 +17,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch('/api/tenant', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				tenant,
@@ -36,7 +39,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch(`/api/tenant/${updatedTenant.id}`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				tenant: updatedTenant,
@@ -57,7 +63,10 @@ const Home: React.FC = () => {
 			]);
 			fetch(`/api/tenant/${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
 			}).catch(() => {
 				setTenantsState([...cache]); // revert back to the previous state
 			});

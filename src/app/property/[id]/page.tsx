@@ -15,7 +15,13 @@ const PropertyDetails: React.FC<PropertyDetailsProps> = ({ params }) => {
 
 	useEffect(() => {
 		if (params.id) {
-			fetch(`/api/property/${params.id}`)
+			fetch(`/api/property/${params.id}`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
+			})
 				.then(response => response.json())
 				.then(data => {
 					setProperty(data.data);
