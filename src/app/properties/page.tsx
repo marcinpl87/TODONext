@@ -18,7 +18,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch('/api/property', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				property,
@@ -40,7 +43,10 @@ const Home: React.FC = () => {
 		callback();
 		fetch(`/api/property/${updatedProperty.id}`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify({
 				userId: login.userId,
 				property: updatedProperty,
@@ -61,7 +67,10 @@ const Home: React.FC = () => {
 			]);
 			fetch(`/api/property/${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
 			}).catch(() => {
 				setPropertiesState([...cache]); // revert back to the previous state
 			});

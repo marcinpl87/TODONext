@@ -24,7 +24,6 @@ const LoginForm: React.FC = () => {
 			const data = await response.json();
 			if (response.ok && data.message === 'OK' && data.token) {
 				setIsError(false);
-				// Store JWT token in localStorage
 				localStorage.setItem('authToken', data.token);
 				dispatchLogin({
 					action: LOGIN_ACTIONS.LOGIN,

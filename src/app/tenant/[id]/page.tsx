@@ -15,7 +15,13 @@ const TenantDetails: React.FC<TenantDetailsProps> = ({ params }) => {
 
 	useEffect(() => {
 		if (params.id) {
-			fetch(`/api/tenant/${params.id}`)
+			fetch(`/api/tenant/${params.id}`, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
+			})
 				.then(response => response.json())
 				.then(data => {
 					setTenant(data.data);
