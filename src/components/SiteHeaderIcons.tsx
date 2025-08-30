@@ -30,14 +30,15 @@ const SiteHeaderIcons: React.FC = () => {
 			<Button
 				variant="ghost"
 				size="icon"
-				onClick={() =>
+				onClick={() => {
+					localStorage.removeItem('authToken');
 					dispatchLogin({
 						action: LOGIN_ACTIONS.LOGOUT,
 						userId: '',
 						userName: '',
 						users: [],
-					})
-				}
+					});
+				}}
 				title={`Logout ${login.userName} (${login.userId})`}
 			>
 				<LogOut className="size-5" />

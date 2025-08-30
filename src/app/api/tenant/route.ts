@@ -1,8 +1,18 @@
 import { sql } from '@vercel/postgres';
 import { Tenant } from '../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
+	// Check authentication
+	const authResult = requireAuth(request);
+	if (authResult.error) {
+		return NextResponse.json(
+			{ message: authResult.error },
+			{ status: 401 },
+		);
+	}
+
 	const data: { userId: string; tenant: Tenant } = await request.json();
 	if (data && data.userId && data.tenant) {
 		await sql.query(
@@ -100,7 +110,15 @@ export const POST = async (request: NextRequest) => {
 	return NextResponse.json({ message: 'OK' }, { status: 200 });
 };
 
-export const GET = async () => {
+export const GET = async (request: NextRequest) => {
+	// Check authentication
+	const authResult = requireAuth(request);
+	if (authResult.error) {
+		return NextResponse.json(
+			{ message: authResult.error },
+			{ status: 401 },
+		);
+	}
 	const data = await sql`
 		SELECT
 			"id",

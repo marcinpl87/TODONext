@@ -56,6 +56,7 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 		userName: '',
 		users: [],
 	});
+
 	return (
 		<LoginDispatchContext.Provider value={dispatch}>
 			<LoginContext.Provider value={state}>
@@ -89,8 +90,19 @@ export const useProjects = () => {
 			setIsLoading(true);
 			setError(null);
 			try {
-				const response = await fetch('/api/project');
+				const response = await fetch('/api/project', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
+				});
 				if (!response.ok) {
+					if (response.status === 401) {
+						// Token expired or invalid, redirect to login
+						localStorage.removeItem('authToken');
+						window.location.reload();
+						return;
+					}
 					throw new Error('Failed to fetch projects');
 				}
 				const data = await response.json();
@@ -120,8 +132,19 @@ export const useTodos = () => {
 			setIsLoading(true);
 			setError(null);
 			try {
-				const response = await fetch('/api/todo');
+				const response = await fetch('/api/todo', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
+				});
 				if (!response.ok) {
+					if (response.status === 401) {
+						// Token expired or invalid, redirect to login
+						localStorage.removeItem('authToken');
+						window.location.reload();
+						return;
+					}
 					throw new Error('Failed to fetch todos');
 				}
 				const data = await response.json();
@@ -151,8 +174,19 @@ export const useProperties = () => {
 			setIsLoading(true);
 			setError(null);
 			try {
-				const response = await fetch('/api/property');
+				const response = await fetch('/api/property', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
+				});
 				if (!response.ok) {
+					if (response.status === 401) {
+						// Token expired or invalid, redirect to login
+						localStorage.removeItem('authToken');
+						window.location.reload();
+						return;
+					}
 					throw new Error('Failed to fetch properties');
 				}
 				const data = await response.json();
@@ -182,8 +216,19 @@ export const useTenants = () => {
 			setIsLoading(true);
 			setError(null);
 			try {
-				const response = await fetch('/api/tenant');
+				const response = await fetch('/api/tenant', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+						'Content-Type': 'application/json',
+					},
+				});
 				if (!response.ok) {
+					if (response.status === 401) {
+						// Token expired or invalid, redirect to login
+						localStorage.removeItem('authToken');
+						window.location.reload();
+						return;
+					}
 					throw new Error('Failed to fetch tenants');
 				}
 				const data = await response.json();

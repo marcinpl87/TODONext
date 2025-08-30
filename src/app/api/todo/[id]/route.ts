@@ -1,13 +1,31 @@
 import { sql } from '@vercel/postgres';
 import { Todo } from '../../../../types';
 import { type NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '../../../../lib/auth';
 
 export const PATCH = async (
 	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) => {
+	// Check authentication
+	const authResult = requireAuth(request);
+	if (authResult.error) {
+		return NextResponse.json(
+			{ message: authResult.error },
+			{ status: 401 },
+		);
+	}
+
 	const { id } = params;
 	const data: { userId: string; todo: Todo } = await request.json();
+
+	// Ensure the authenticated user can only update their own todos
+	if (data.userId !== authResult.user?.userId) {
+		return NextResponse.json(
+			{ message: 'Forbidden: Cannot update todos for other users' },
+			{ status: 403 },
+		);
+	}
 	if (id && data && data.userId && data.todo) {
 		await sql.query(
 			`UPDATE todo SET
@@ -42,6 +60,15 @@ export const GET = async (
 	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) => {
+	// Check authentication
+	const authResult = requireAuth(request);
+	if (authResult.error) {
+		return NextResponse.json(
+			{ message: authResult.error },
+			{ status: 401 },
+		);
+	}
+
 	const { id } = params;
 	if (id) {
 		const data = await sql`
@@ -57,7 +84,7 @@ export const GET = async (
 				"isDone",
 				(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
 			FROM todo
-			WHERE "id" = ${id};
+			WHERE "id" = ${id} AND "userId" = ${authResult.user?.userId};
 		`;
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
@@ -68,11 +95,20 @@ export const DELETE = async (
 	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) => {
+	// Check authentication
+	const authResult = requireAuth(request);
+	if (authResult.error) {
+		return NextResponse.json(
+			{ message: authResult.error },
+			{ status: 401 },
+		);
+	}
+
 	const { id } = params;
 	if (id) {
 		await sql`
 			DELETE FROM todo
-			WHERE "id" = ${id};
+			WHERE "id" = ${id} AND "userId" = ${authResult.user?.userId};
 		`;
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
