@@ -119,6 +119,6 @@ export type Tenant = {
 export type BankTransaction = {
 	date: string;
 	amount: string;
-	creditor: string;
+	receiver: string;
 	description: string;
 };

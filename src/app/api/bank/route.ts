@@ -84,7 +84,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 					amount:
 						(isPositive ? '+' : '-') +
 						tr?.transaction_amount.amount,
-					creditor: tr?.creditor.name,
+					receiver: tr?.creditor.name,
 					description: tr?.remittance_information[0],
 				});
 			},
