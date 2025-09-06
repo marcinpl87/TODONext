@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	CalendarPlus,
 	CircleCheckBig,
@@ -57,35 +57,50 @@ const FileUpload: React.FC = () => {
 };
 
 const Test: React.FC = () => {
+	const isAccountFetched = useRef(false);
 	const [subtasks, setSubtasks] = useState<string[]>(['']);
+	const [errors, setErrors] = useState<string>('');
 	const [bankTransactions, setBankTransactions] = useState<BankTransaction[]>(
 		[],
 	);
-	const fetchBankData = useCallback(async (continuationKey?: string) => {
-		const url = `/api/bank${continuationKey ? `?continuationKey=${continuationKey}` : ''}`;
-		fetch(url, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-				'Content-Type': 'application/json',
-			},
-		})
-			.then(response => response.json())
-			.then(async data => {
-				if (data?.transactions) {
-					setBankTransactions(prev => [
-						...prev,
-						...data.transactions,
-					]);
-				}
-				if (data?.continuationKey) {
-					fetchBankData(data.continuationKey);
-				}
-			});
-	}, []);
+	const saveBankData = useCallback(async () => {}, []);
+	const fetchBankData = useCallback(
+		async (continuationKey?: string) => {
+			const url = `/api/bank${continuationKey ? `?continuationKey=${continuationKey}` : ''}`;
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+					'Content-Type': 'application/json',
+				},
+			})
+				.then(response => response.json())
+				.then(async data => {
+					if (data?.transactions) {
+						setBankTransactions(prev => [
+							...prev,
+							...data.transactions,
+						]);
+						if (data?.continuationKey) {
+							fetchBankData(data.continuationKey);
+						} // continuation key is present so fetch more data
+						else {
+							saveBankData();
+						} // continuation key is not present so we can save data
+					} // there are transactions so there are no errors
+					else {
+						setErrors(JSON.stringify(data));
+					} // there are no transactions so we assume there are errors
+				});
+		},
+		[saveBankData],
+	);
 
 	useEffect(() => {
-		fetchBankData();
+		if (!isAccountFetched?.current) {
+			isAccountFetched.current = true;
+			fetchBankData();
+		}
 	}, [fetchBankData]);
 
 	return (
@@ -94,15 +109,19 @@ const Test: React.FC = () => {
 			<Card className="w-full max-w-4xl mb-5">
 				<CardHeader>
 					<div className="grid gap-2">
-						{bankTransactions.map((bt, index) => (
-							<p
-								key={index}
-								className="text-sm leading-relaxed break-words mb-2"
-							>
-								{bt.date};{bt.amount};{bt.creditor};
-								{bt.description}
-							</p>
-						))}
+						{errors ? (
+							<p className="text-sm text-red-500">{errors}</p>
+						) : (
+							bankTransactions.map((bt, index) => (
+								<p
+									key={index}
+									className="text-sm leading-relaxed break-words mb-2"
+								>
+									{bt.date};{bt.amount};{bt.receiver};
+									{bt.description}
+								</p>
+							))
+						)}
 					</div>
 				</CardHeader>
 			</Card>

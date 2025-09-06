@@ -191,3 +191,19 @@ CREATE TABLE "public"."transaction_rule" (
     "categoryId" uuid
 );
 ```
+
+```
+CREATE TABLE "public"."bank_transaction" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "dateTimestamp" timestamp NULL DEFAULT NULL,
+    "amount" numeric(12, 2),
+    "amountCustom" numeric(12, 2),
+    "receiver" varchar,
+    "description" text,
+    "descriptionCustom" text,
+    "categoryId" uuid,
+    "isManual" boolean DEFAULT false,
+    "isHidden" boolean DEFAULT false
+);
+```
