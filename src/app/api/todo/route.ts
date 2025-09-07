@@ -36,7 +36,7 @@ export const POST = async (request: NextRequest) => {
 					"estimatedTime",
 					"isDone",
 					"doneTimestamp"
-				) 
+				)
 				VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), $8, $9, to_timestamp($10));`,
 			[
 				data.todo.id,
