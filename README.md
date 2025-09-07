@@ -195,6 +195,7 @@ CREATE TABLE "public"."transaction_rule" (
 ```
 CREATE TABLE "public"."bank_transaction" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "userId" uuid,
     "creationTimestamp" timestamp DEFAULT NOW(),
     "dateTimestamp" timestamp NULL DEFAULT NULL,
     "amount" numeric(12, 2),

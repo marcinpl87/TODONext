@@ -4,7 +4,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
-	// Check authentication
 	const authResult = requireAuth(request);
 	if (authResult.error) {
 		return NextResponse.json(
@@ -13,33 +12,33 @@ export const POST = async (request: NextRequest) => {
 		);
 	}
 
-	const data: { userId: string; project: Project } = await request.json();
+	const data: { userId: string; transaction: Project } = await request.json();
 
-	// Ensure the authenticated user can only create projects for themselves
 	if (data.userId !== authResult.user?.userId) {
 		return NextResponse.json(
-			{ message: 'Forbidden: Cannot create projects for other users' },
+			{
+				message:
+					'Forbidden: Cannot create transactions for other users',
+			},
 			{ status: 403 },
 		);
 	}
 
-	if (data && data.userId && data.project) {
+	if (data && data.userId && data.transaction) {
 		await sql.query(
-			`INSERT INTO project (
+			`INSERT INTO bank_transaction (
 				"id",
 				"userId",
-				"title",
 				"description",
 				"creationTimestamp"
 			)
 			VALUES ($1, $2, $3, $4, to_timestamp($5));`,
 			[
-				data.project.id,
+				data.transaction.id,
 				data.userId,
-				data.project.title,
-				data.project.description,
-				data.project.creationTimestamp
-					? data.project.creationTimestamp / 1000
+				data.transaction.description,
+				data.transaction.creationTimestamp
+					? data.transaction.creationTimestamp / 1000
 					: 0,
 			],
 		);
@@ -56,17 +55,11 @@ export const GET = async (request: NextRequest) => {
 			{ status: 401 },
 		);
 	}
-
-	// Only return projects for the authenticated user
 	const data = await sql`
 		SELECT
-			"id",
-			"userId",
-			"title",
-			"description",
+			*,
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
-		FROM project
-		WHERE "userId" = ${authResult.user?.userId}
+		FROM bank_transaction
 		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json({ data: data.rows }, { status: 200 });

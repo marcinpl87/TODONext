@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest) => {
 				"insuranceNumber",
 				"notes",
 				"creationTimestamp"
-			) 
+			)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, to_timestamp($16));`,
 			[
 				data.property.id,
