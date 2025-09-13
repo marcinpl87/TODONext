@@ -18,6 +18,10 @@ export const siteConfig = {
 			href: '/tenants',
 		},
 		{
+			title: 'Bank',
+			href: '/bank',
+		},
+		{
 			title: 'Test',
 			href: '/test',
 		},

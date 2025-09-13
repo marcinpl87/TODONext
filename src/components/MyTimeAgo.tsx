@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import TimeAgo from 'react-timeago';
 import { DateTime } from 'luxon';
-import { DATE_FORMAT } from '../consts';
+import { DATETIME_FORMAT } from '../consts';
 
 type MyTimeAgoProps = {
 	millis: number;
@@ -11,7 +11,7 @@ type MyTimeAgoProps = {
 
 const MyTimeAgo: React.FC<MyTimeAgoProps> = ({ millis }) => {
 	const [isCount, setIsCount] = useState<boolean>(true);
-	const formattedDate = DateTime.fromMillis(millis).toFormat(DATE_FORMAT);
+	const formattedDate = DateTime.fromMillis(millis).toFormat(DATETIME_FORMAT);
 
 	return (
 		<span

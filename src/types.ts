@@ -123,8 +123,16 @@ export type AspspTransaction = {
 	description: string;
 };
 
-export type Transaction = Pick<AspspTransaction, 'description'> & {
-	id: string;
-	userId: string;
-	creationTimestamp: number;
+export type ApiTransaction = {
+	date: Date | null | undefined;
+	amount: number | null;
+	categoryId: string | null;
 };
+
+export type Transaction = Pick<AspspTransaction, 'description' | 'receiver'> &
+	Pick<ApiTransaction, 'date' | 'amount' | 'categoryId'> & {
+		id: string;
+		userId: string;
+		creationTimestamp: number;
+		isManual: boolean;
+	};

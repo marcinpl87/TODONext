@@ -2,13 +2,14 @@
 
 import React, { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react';
 import DatePicker from 'react-datepicker';
-import { DATE_FORMAT } from '../consts';
+import { DATETIME_FORMAT } from '../consts';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import DynamicInputsList from './DynamicInputsList';
+import 'react-datepicker/dist/react-datepicker.css';
 
 type TodoFormProps = {
 	header: string;
@@ -94,18 +95,21 @@ const TodoForm: React.FC<TodoFormProps> = ({
 			</div>
 			<div className="grid gap-2">
 				<Label htmlFor="date">Date</Label>
-				<DatePicker
-					id="date"
-					wrapperClassName="w-full"
-					selected={startDate}
-					onChange={date => setStartDate(date)}
-					showTimeSelect
-					timeFormat="HH:mm"
-					timeIntervals={15}
-					dateFormat={DATE_FORMAT}
-					placeholderText="Date"
-					customInput={<Input />}
-				/>
+				{/* DatePicker adds new div on focus, so to not create new grid gap we wrap it in a div */}
+				<div>
+					<DatePicker
+						id="date"
+						wrapperClassName="w-full"
+						selected={startDate}
+						onChange={date => setStartDate(date)}
+						showTimeSelect
+						timeFormat="HH:mm"
+						timeIntervals={15}
+						dateFormat={DATETIME_FORMAT}
+						placeholderText="Date"
+						customInput={<Input />}
+					/>
+				</div>
 			</div>
 		</CardContent>
 		<CardFooter className="justify-between space-x-2">

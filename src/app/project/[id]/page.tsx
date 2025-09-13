@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import 'react-datepicker/dist/react-datepicker.css';
 import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
 import LoadingIconTwo from '../../../components/LoadingIconTwo';
