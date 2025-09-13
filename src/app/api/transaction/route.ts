@@ -32,7 +32,7 @@ export const POST = async (request: NextRequest) => {
 				"description",
 				"creationTimestamp"
 			)
-			VALUES ($1, $2, $3, $4, to_timestamp($5));`,
+			VALUES ($1, $2, $3, to_timestamp($4));`,
 			[
 				data.transaction.id,
 				data.userId,
