@@ -116,9 +116,15 @@ export type Tenant = {
 	status: number;
 };
 
-export type BankTransaction = {
+export type AspspTransaction = {
 	date: string;
 	amount: string;
 	receiver: string;
 	description: string;
+};
+
+export type Transaction = Pick<AspspTransaction, 'description'> & {
+	id: string;
+	userId: string;
+	creationTimestamp: number;
 };

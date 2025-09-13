@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { BankTransaction } from '../../../../types';
+import type { AspspTransaction } from '../../../../types';
 import { getHeaders } from '../utils';
 
 const ACCOUNT_ID = process.env.BANK_ACCOUNT_ID || '';
@@ -19,7 +19,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 		headers: getHeaders(),
 	});
 	const transactions = JSON.parse(await accountTransactionsResponse.text());
-	const returnArray: BankTransaction[] = [];
+	const returnArray: AspspTransaction[] = [];
 	if (transactions?.transactions?.length > 0) {
 		transactions?.transactions.forEach(
 			(tr: {

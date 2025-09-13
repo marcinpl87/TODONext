@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getHeaders } from '../utils';
 
+/**
+ * Mark this route as dynamic to prevent Next.js from trying to statically
+ * pre-render it at build time. API routes like this one depend on secrets,
+ * environment variables, and external services (e.g. crypto signing, bank API)
+ * that are only available at runtime. Without this flag, `next build` would
+ * attempt to execute the code during prerendering and fail with errors such as
+ * "No key provided to sign".
+ */
+export const dynamic = 'force-dynamic';
+
 const API_BASE_URL = process.env.BANK_API_BASE_URL || '';
 const REDIRECT_URL = process.env.BANK_REDIRECT_URL || '';
 const BANK_NAME = process.env.BANK_NAME || '';
