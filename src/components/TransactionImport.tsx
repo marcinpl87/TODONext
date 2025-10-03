@@ -8,13 +8,13 @@ import LoadingIcon from './LoadingIcon';
 type TransactionImportProps = {
 	errors: string;
 	isLoading: boolean;
-	fetchBankData: () => void;
+	importBankData: () => void;
 };
 
 const TransactionImport: React.FC<TransactionImportProps> = ({
 	errors,
 	isLoading,
-	fetchBankData,
+	importBankData,
 }) => (
 	<>
 		{errors ? (
@@ -24,11 +24,7 @@ const TransactionImport: React.FC<TransactionImportProps> = ({
 				</CardHeader>
 			</Card>
 		) : (
-			<Button
-				className="mb-5"
-				variant="outline"
-				onClick={() => fetchBankData()}
-			>
+			<Button className="mb-5" variant="outline" onClick={importBankData}>
 				{isLoading ? <LoadingIcon className="scale-50" /> : 'Import'}
 			</Button>
 		)}
