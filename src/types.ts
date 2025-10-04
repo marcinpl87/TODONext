@@ -123,6 +123,10 @@ export type AspspTransaction = {
 	description: string;
 };
 
+export type AspspResponse =
+	| AspspTransaction[]
+	| { result: string; response: any };
+
 export type ApiTransaction = {
 	date: Date | null | undefined;
 	amount: number | null;
