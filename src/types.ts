@@ -139,4 +139,26 @@ export type Transaction = Pick<AspspTransaction, 'description' | 'receiver'> &
 		userId: string;
 		creationTimestamp: number;
 		isManual: boolean;
+		isHidden: boolean;
+		amountCustom: number | null;
+		descriptionCustom: string | null;
 	};
+
+export type TransactionEdit = (
+	id: string,
+	name: string,
+	value: string | boolean,
+) => void;
+
+export type TransactionDelete = (id: string) => void;
+
+export type Category = {
+	id: string;
+	name: string;
+};
+
+export type Budget = {
+	category: string;
+	total: number;
+	[key: string]: string | number; // for dynamic month fields
+};

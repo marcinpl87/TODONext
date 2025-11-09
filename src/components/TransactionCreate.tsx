@@ -2,11 +2,13 @@
 
 import React, { useState, FormEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { DateTime } from 'luxon';
 import { useLogin } from '../hooks';
 import { Card } from './ui/card';
-import TransactionForm from './TransactionForm';
-import type { Transaction } from '../types';
 import { Button } from './ui/button';
+import TransactionForm from './TransactionForm';
+import { MILISECONDS_FORMAT } from '../consts';
+import type { Transaction } from '../types';
 
 type TransactionCreateProps = {
 	addTransaction: (transaction: Transaction, callback: () => void) => void;
@@ -15,12 +17,18 @@ type TransactionCreateProps = {
 const TransactionCreate: React.FC<TransactionCreateProps> = ({
 	addTransaction,
 }) => {
+	const defaultTimestamp = DateTime.fromMillis(
+		Number(new Date().getTime().toString()),
+	).toFormat(MILISECONDS_FORMAT);
 	const login = useLogin();
 	const [isOpened, setIsOpened] = useState<boolean>(false);
 	const [date, setDate] = useState<Date | null | undefined>(null);
 	const [amount, setAmount] = useState<number | null>(null);
 	const [receiver, setReceiver] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
+	const [creationTimestamp, setCreationTimestamp] = useState<string | null>(
+		defaultTimestamp,
+	);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -28,19 +36,28 @@ const TransactionCreate: React.FC<TransactionCreateProps> = ({
 			{
 				id: uuidv4(),
 				userId: login.userId,
-				creationTimestamp: Date.now(),
+				creationTimestamp: creationTimestamp
+					? DateTime.fromFormat(
+							creationTimestamp,
+							MILISECONDS_FORMAT,
+						).toMillis()
+					: Date.now(),
 				date,
 				amount,
 				receiver,
 				description,
 				isManual: true,
+				isHidden: false,
 				categoryId: null,
+				amountCustom: null,
+				descriptionCustom: null,
 			},
 			() => {
 				setDate(null);
 				setAmount(null);
 				setReceiver('');
 				setDescription('');
+				setCreationTimestamp(defaultTimestamp);
 				setIsOpened(false);
 			},
 		);
