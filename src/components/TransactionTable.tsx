@@ -98,7 +98,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 							<TableCell>{transaction.receiver}</TableCell>
 							<TableCell
 								className={
-									transaction.description.includes(' ')
+									transaction.description?.includes(' ')
 										? 'break-words'
 										: 'break-all'
 								}

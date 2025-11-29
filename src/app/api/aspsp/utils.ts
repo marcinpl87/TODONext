@@ -1,6 +1,10 @@
 import { sql } from '@vercel/postgres';
 import jwa from 'jwa';
-import type { AspspResponse, AspspTransaction } from '../../../types';
+import type {
+	Transaction,
+	AspspResponse,
+	AspspTransaction,
+} from '../../../types';
 
 const PRIVATE_KEY = process.env.BANK_PRIVATE_KEY || '';
 const APPLICATION_ID = process.env.BANK_APPLICATION_ID || '';
@@ -107,7 +111,7 @@ export const incrementalImport = async (
 export const saveTransactionsInDB = async (
 	userId: string,
 	transactions: AspspTransaction[],
-): Promise<void> => {
+): Promise<Transaction[]> => {
 	const values: Array<number | string> = [];
 	const placeholders: string[] = [];
 	const currentTimestampSeconds = Date.now() / 1000;
@@ -140,7 +144,7 @@ export const saveTransactionsInDB = async (
 			userId,
 		);
 	});
-	await sql.query(
+	const result = await sql.query(
 		`
 			INSERT INTO bank_transaction (
 				"creationTimestamp",
@@ -151,7 +155,21 @@ export const saveTransactionsInDB = async (
 				"userId"
 			)
 			VALUES ${placeholders.join(', ')}
+			RETURNING 
+				"id",
+				"userId",
+				(EXTRACT(EPOCH FROM "date") * 1000)::BIGINT AS "date",
+				"amount",
+				"amountCustom",
+				"receiver",
+				"description",
+				"descriptionCustom",
+				"categoryId",
+				"isManual",
+				"isHidden",
+				(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		`,
 		values,
 	);
+	return result.rows;
 };
