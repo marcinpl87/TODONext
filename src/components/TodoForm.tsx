@@ -80,16 +80,30 @@ const TodoForm: React.FC<TodoFormProps> = ({
 				/>
 			</div>
 			<div className="grid gap-2">
-				<Label htmlFor="estimatedTime">
-					Estimated time (is seconds)
-				</Label>
+				<Label htmlFor="estimatedTime">Estimated time</Label>
 				<Input
 					id="estimatedTime"
-					type="number"
-					value={estimatedTime}
-					onChange={(e: ChangeEvent<HTMLInputElement>) =>
-						setEstimatedTime(Number(e.target.value))
-					}
+					type="time"
+					min="00:00:00"
+					max="23:59:59"
+					step="1"
+					value={`${Math.floor(estimatedTime / 3600)
+						.toString()
+						.padStart(2, '0')}:${Math.floor(
+						(estimatedTime % 3600) / 60,
+					)
+						.toString()
+						.padStart(2, '0')}:${(estimatedTime % 60)
+						.toString()
+						.padStart(2, '0')}`}
+					onChange={(e: ChangeEvent<HTMLInputElement>) => {
+						const [hours, minutes, seconds] = e.target.value
+							.split(':')
+							.map(Number);
+						const totalSeconds =
+							hours * 3600 + minutes * 60 + seconds;
+						setEstimatedTime(totalSeconds);
+					}}
 					required
 				/>
 			</div>
