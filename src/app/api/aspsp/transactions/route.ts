@@ -1,8 +1,7 @@
-import { sql } from '@vercel/postgres';
 import { NextRequest, NextResponse } from 'next/server';
-import { getHeaders } from '../utils';
+import { getHeaders, incrementalImport, saveTransactionsInDB } from '../utils';
 import { requireAuth } from '../../../../lib/auth';
-import type { AspspTransaction } from '../../../../types';
+import type { AspspResponse, AspspTransaction } from '../../../../types';
 
 const ACCOUNT_ID = process.env.BANK_ACCOUNT_ID || '';
 const ACCOUNT_IBAN = process.env.BANK_ACCOUNT_IBAN || '';
@@ -23,8 +22,6 @@ type RawTransaction = {
 	};
 	remittance_information: string[];
 };
-
-type AspspResponse = AspspTransaction[] | { result: string; response: any };
 
 const transformTransaction = (
 	tr: RawTransaction,
@@ -61,102 +58,6 @@ const getOnePage = async (continuationKey?: string): Promise<AspspResponse> => {
 	} else {
 		return { result: 'ERROR', response: transactions };
 	}
-};
-
-const incrementalImport = async (
-	newTransactions: AspspTransaction[],
-): Promise<AspspResponse> => {
-	const dbData: { rows: AspspTransaction[] } = await sql`
-		SELECT
-			(EXTRACT(EPOCH FROM "date") * 1000)::BIGINT AS "date",
-			"amount",
-			"receiver",
-			"description"
-		FROM bank_transaction
-		WHERE "isManual" IS FALSE
-		ORDER BY "creationTimestamp" DESC
-		LIMIT 1;
-	`;
-	if (dbData.rows.length > 0) {
-		const dbTransactionToSearch: AspspTransaction = {
-			...dbData.rows[0],
-			date: String(
-				new Date(Number(dbData.rows[0].date))
-					.toISOString()
-					.slice(0, 10),
-			),
-			amount:
-				(Number(dbData.rows[0].amount) >= 0 ? '+' : '-') +
-				Math.abs(Number(dbData.rows[0].amount)).toFixed(2),
-		};
-		const foundIndex = newTransactions.findIndex(tr =>
-			Object.entries(dbTransactionToSearch).every(
-				([key, value]) => tr[key as keyof AspspTransaction] === value,
-			),
-		);
-		if (foundIndex !== -1) {
-			return newTransactions.slice(0, foundIndex);
-		} else {
-			return {
-				result: 'ERROR, last DB transaction not found in ASPSP Data',
-				response: null,
-			};
-		}
-	} else {
-		return { result: 'ERROR, no DB data', response: null };
-	}
-};
-
-const saveTransactionsInDB = async (
-	userId: string,
-	transactions: AspspTransaction[],
-): Promise<void> => {
-	const values: Array<number | string> = [];
-	const placeholders: string[] = [];
-	const currentTimestampSeconds = Date.now() / 1000;
-	transactions.reverse(); // reverse to have oldest transactions first...
-	// ...the order in the DB will be the same as the order in the API
-	transactions.forEach((tr: AspspTransaction, i: number) => {
-		const baseIndex = i * 6;
-		placeholders.push(
-			`(
-				to_timestamp($${baseIndex + 1}), 
-				to_timestamp($${baseIndex + 2}), 
-				$${baseIndex + 3}, 
-				$${baseIndex + 4}, 
-				$${baseIndex + 5},
-				$${baseIndex + 6}
-			)`,
-		);
-		values.push(
-			currentTimestampSeconds + i, // increment dates by index, because...
-			// ...Postgres in SELECT * without an ORDER BY, is free to return...
-			// ...rows in any order, and it may change from one query to another
-			Date.UTC(
-				parseInt(tr.date.slice(0, 4)), // year
-				parseInt(tr.date.slice(5, 7)) - 1, // month (0-based)
-				parseInt(tr.date.slice(8, 10)), // day
-			) / 1000,
-			tr.amount,
-			tr.receiver,
-			tr.description,
-			userId,
-		);
-	});
-	await sql.query(
-		`
-			INSERT INTO bank_transaction (
-				"creationTimestamp",
-				"date",
-				"amount",
-				"receiver",
-				"description",
-				"userId"
-			)
-			VALUES ${placeholders.join(', ')}
-		`,
-		values,
-	);
 };
 
 export const GET = async (request: NextRequest): Promise<NextResponse> => {

@@ -31,7 +31,7 @@ const transformTransaction = (tr: RawTransaction): AspspTransaction => {
 	return {
 		date: String(tr?.date),
 		amount: String((tr?.amount > 0 ? '+' : '') + tr?.amount),
-		receiver: descriptionAndReceiver[1] || String(tr?.import.payee),
+		receiver: descriptionAndReceiver[1] || String(tr?.import?.payee || ''),
 		description: descriptionAndReceiver[0],
 	};
 };
