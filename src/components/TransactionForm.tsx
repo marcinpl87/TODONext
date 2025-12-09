@@ -7,7 +7,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
-import { DATE_FORMAT } from '../consts';
+import { DATE_FORMAT, MILISECONDS_FORMAT } from '../consts';
 import 'react-datepicker/dist/react-datepicker.css';
 
 type TransactionFormProps = {
@@ -20,6 +20,8 @@ type TransactionFormProps = {
 	setReceiver: (value: React.SetStateAction<string>) => void;
 	description: string;
 	setDescription: (value: React.SetStateAction<string>) => void;
+	creationTimestamp: string | null;
+	setCreationTimestamp: (value: React.SetStateAction<string | null>) => void;
 	handleCancel: () => void;
 	handleSubmit: (e: FormEvent) => void;
 };
@@ -34,6 +36,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 	setReceiver,
 	description,
 	setDescription,
+	creationTimestamp,
+	setCreationTimestamp,
 	handleCancel,
 	handleSubmit,
 }) => (
@@ -93,6 +97,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 					onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
 						setDescription(e.target.value)
 					}
+				/>
+			</div>
+			<div className="grid gap-2">
+				<Label htmlFor="creationTimestamp">Creation Timestamp</Label>
+				<Input
+					id="creationTimestamp"
+					type="string"
+					placeholder={MILISECONDS_FORMAT}
+					value={creationTimestamp || undefined}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						setCreationTimestamp(e.target.value)
+					}
+					autoComplete="off"
+					required
 				/>
 			</div>
 		</CardContent>
