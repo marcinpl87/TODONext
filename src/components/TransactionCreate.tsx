@@ -81,6 +81,8 @@ const TransactionCreate: React.FC<TransactionCreateProps> = ({
 						setReceiver={setReceiver}
 						description={description}
 						setDescription={setDescription}
+						creationTimestamp={creationTimestamp}
+						setCreationTimestamp={setCreationTimestamp}
 						handleCancel={handleCancel}
 						handleSubmit={handleSubmit}
 					/>
