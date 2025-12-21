@@ -4,8 +4,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import TransactionCreate from '../../components/TransactionCreate';
 import TransactionImport from '../../components/TransactionImport';
 import TransactionTable from '../../components/TransactionTable';
+import BudgetTable from '../../components/BudgetTable';
 import { useLogin } from '../../hooks';
-import type { Transaction } from '../../types';
+import type { Budget, Category, Transaction } from '../../types';
 
 const Bank: React.FC = () => {
 	const login = useLogin();
@@ -14,6 +15,8 @@ const Bank: React.FC = () => {
 	const [transactionsState, setTransactionsState] = useState<Transaction[]>(
 		[],
 	);
+	const [budgetState, setBudgetState] = useState<Budget[]>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
 
 	const importBankData = useCallback(async () => {
 		setIsImportLoading(true);
@@ -59,12 +62,6 @@ const Bank: React.FC = () => {
 		});
 	};
 
-	const editTransaction = (id: string, categoryId: string) => {
-		setTransactionsState(prev =>
-			prev.map(tx => (tx.id === id ? { ...tx, categoryId } : tx)),
-		);
-	};
-
 	useEffect(() => {
 		fetch('/api/transaction', {
 			method: 'GET',
@@ -74,9 +71,23 @@ const Bank: React.FC = () => {
 			},
 		})
 			.then(response => response.json())
-			.then((data: { data: Transaction[] }) => {
+			.then((data: { data: Transaction[]; budgetData: Budget[] }) => {
 				if (data?.data) {
 					setTransactionsState(data.data || []);
+					setBudgetState(data.budgetData || []);
+				}
+			});
+		fetch('/api/category', {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
+		})
+			.then(response => response.json())
+			.then((data: { data: Category[] }) => {
+				if (data?.data) {
+					setCategories(data.data || []);
 				}
 			});
 	}, []);
@@ -96,10 +107,19 @@ const Bank: React.FC = () => {
 					/>
 				</div>
 			</div>
-			<TransactionTable
-				transactions={transactionsState}
-				editTransaction={editTransaction}
-			/>
+			{budgetState &&
+				Array.isArray(budgetState) &&
+				budgetState.length > 0 && (
+					<BudgetTable categories={categories} budget={budgetState} />
+				)}
+			{transactionsState &&
+				Array.isArray(transactionsState) &&
+				transactionsState.length > 0 && (
+					<TransactionTable
+						categories={categories}
+						transactions={transactionsState}
+					/>
+				)}
 		</div>
 	);
 };
