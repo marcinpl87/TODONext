@@ -6,7 +6,7 @@ import { useLogin } from '../hooks';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import ProjectForm from './ProjectForm';
-import type { Project } from '../types';
+import type { Project } from '../types/project';
 
 type ProjectCreateProps = {
 	addProject: (project: Project, callback: () => void) => void;

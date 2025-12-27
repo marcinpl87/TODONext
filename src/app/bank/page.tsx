@@ -6,7 +6,7 @@ import TransactionImport from '../../components/TransactionImport';
 import TransactionTable from '../../components/TransactionTable';
 import BudgetTable from '../../components/BudgetTable';
 import { useLogin } from '../../hooks';
-import type { Budget, Category, Transaction } from '../../types';
+import type { Budget, Category, Transaction } from '../../types/financial';
 
 const Bank: React.FC = () => {
 	const login = useLogin();

@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Tenant } from '../../../../types';
+import { Tenant } from '../../../../types/realEstate';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const PATCH = async (

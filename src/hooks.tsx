@@ -13,13 +13,11 @@ import SiteHeader from './components/SiteHeader';
 import LoginForm from './components/LoginForm';
 import {
 	LOGIN_ACTIONS,
-	type Todo,
-	type Project,
-	type Tenant,
-	type Property,
 	type LoginState,
 	type LoginDispatch,
-} from './types';
+} from './types/app';
+import { type Todo, type Project } from './types/project';
+import { type Tenant, type Property } from './types/realEstate';
 
 const LoginContext = createContext<LoginState>({
 	isLoggedIn: false,

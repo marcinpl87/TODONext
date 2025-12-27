@@ -6,7 +6,7 @@ import { Link } from 'next-view-transitions';
 import { Card, CardContent } from './ui/card';
 import TenantForm from './TenantForm';
 import IconButton from './IconButton';
-import type { Tenant } from '../types';
+import type { Tenant } from '../types/realEstate';
 
 type TenantItemProps = {
 	tenant: Tenant;

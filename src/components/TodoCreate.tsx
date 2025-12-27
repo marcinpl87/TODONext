@@ -7,7 +7,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import TodoForm from './TodoForm';
 import { DEFAULT_TIMEOUT } from '../consts';
-import type { Todo } from '../types';
+import type { Todo } from '../types/project';
 
 type TodoCreateProps = {
 	addTodo: (todo: Todo, callback: () => void) => void;

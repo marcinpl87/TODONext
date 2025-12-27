@@ -10,7 +10,7 @@ import {
 	TableHeader,
 	TableRow,
 } from './ui/table';
-import type { Budget, Category } from '../types';
+import type { Budget, Category } from '../types/financial';
 
 type BudgetTableProps = {
 	budget: Budget[];

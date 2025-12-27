@@ -9,7 +9,7 @@ import type {
 	Transaction,
 	TransactionDelete,
 	TransactionEdit,
-} from '../types';
+} from '../types/financial';
 import TransactionTableRow from './TransactionTableRow';
 
 type TransactionTableProps = {

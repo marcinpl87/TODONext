@@ -4,7 +4,7 @@ import React, { type FormEvent, useState } from 'react';
 import InputText from './InputText';
 import Button from './Button';
 import { useDispatchLogin } from '../hooks';
-import { LOGIN_ACTIONS } from '../types';
+import { LOGIN_ACTIONS } from '../types/app';
 
 const LoginForm: React.FC = () => {
 	const dispatchLogin = useDispatchLogin();

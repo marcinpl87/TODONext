@@ -8,7 +8,7 @@ import { useDispatchLogin, useLogin } from '../hooks';
 import { Button } from './ui/button';
 import ThemeToggle from './ThemeToggle';
 import MyAvatar from './MyAvatar';
-import { LOGIN_ACTIONS } from '../types';
+import { LOGIN_ACTIONS } from '../types/app';
 
 const SiteHeaderIcons: React.FC = () => {
 	const login = useLogin();

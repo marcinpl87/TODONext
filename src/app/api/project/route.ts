@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Project } from '../../../types';
+import { Project } from '../../../types/project';
 import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '../../../lib/auth';
 

@@ -5,7 +5,7 @@ import PropertyCreate from '../../components/PropertyCreate';
 import PropertyItem from '../../components/PropertyItem';
 import LoadingIconTwo from '../../components/LoadingIconTwo';
 import { useProperties, useLogin } from '../../hooks';
-import type { Property } from '../../types';
+import type { Property } from '../../types/realEstate';
 
 const Home: React.FC = () => {
 	const login = useLogin();

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import PropertyForm from './PropertyForm';
-import type { Property } from '../types';
+import type { Property } from '../types/realEstate';
 
 type PropertyCreateProps = {
 	addProperty: (property: Property, callback: () => void) => void;

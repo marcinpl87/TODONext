@@ -14,7 +14,7 @@ import {
 	Undo,
 } from 'lucide-react';
 import IconButton from './IconButton';
-import type { Todo } from '../types';
+import type { Todo } from '../types/project';
 
 type TodoControlsProps = {
 	todo: Todo;

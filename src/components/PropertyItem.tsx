@@ -6,7 +6,7 @@ import { Link } from 'next-view-transitions';
 import { Card, CardContent } from './ui/card';
 import PropertyForm from './PropertyForm';
 import IconButton from './IconButton';
-import type { Property } from '../types';
+import type { Property } from '../types/realEstate';
 
 type PropertyItemProps = {
 	property: Property;

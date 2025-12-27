@@ -42,7 +42,7 @@ import type {
 	Transaction,
 	TransactionDelete,
 	TransactionEdit,
-} from '../types';
+} from '../types/financial';
 
 const WORD_LENGTH_LIMIT = 20;
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Tenant } from '../../../types';
+import { Tenant } from '../../../types/realEstate';
 import { Card } from '../../../components/ui/card';
 import LoadingIconTwo from '../../../components/LoadingIconTwo';
 

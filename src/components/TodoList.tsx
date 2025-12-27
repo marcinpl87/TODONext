@@ -2,7 +2,7 @@
 
 import React from 'react';
 import TodoItem from './TodoItem';
-import type { Todo } from '../types';
+import type { Todo } from '../types/project';
 
 type TodoListProps = {
 	todos: Todo[];

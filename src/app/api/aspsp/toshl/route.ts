@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { requireAuth } from '../../../../lib/auth';
 import { incrementalImport, saveTransactionsInDB } from '../utils';
-import type { AspspResponse, AspspTransaction } from '../../../../types';
+import type {
+	AspspResponse,
+	AspspTransaction,
+} from '../../../../types/financial';
 
 /**
  * Mark this route as dynamic to prevent Next.js from trying to statically

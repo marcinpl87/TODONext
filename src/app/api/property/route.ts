@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Property } from '../../../types';
+import { Property } from '../../../types/realEstate';
 import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '../../../lib/auth';
 

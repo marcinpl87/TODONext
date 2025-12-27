@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import TenantForm from './TenantForm';
-import type { Tenant } from '../types';
+import type { Tenant } from '../types/realEstate';
 
 type TenantCreateProps = {
 	addTenant: (tenant: Tenant, callback: () => void) => void;

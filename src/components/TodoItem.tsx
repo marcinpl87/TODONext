@@ -9,7 +9,7 @@ import MyTimeAgo from './MyTimeAgo';
 import MyAvatar from './MyAvatar';
 import { useLogin } from '../hooks';
 import { SUBTASK_DONE_MARKER } from '../consts';
-import type { Todo } from '../types';
+import type { Todo } from '../types/project';
 
 type TodoItemProps = {
 	todo: Todo;

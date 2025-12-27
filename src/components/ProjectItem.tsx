@@ -6,7 +6,7 @@ import { Link } from 'next-view-transitions';
 import { Card, CardContent } from './ui/card';
 import ProjectForm from './ProjectForm';
 import IconButton from './IconButton';
-import type { Project } from '../types';
+import type { Project } from '../types/project';
 
 type ProjectItemProps = {
 	project: Project;

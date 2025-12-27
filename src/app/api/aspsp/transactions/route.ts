@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getHeaders, incrementalImport, saveTransactionsInDB } from '../utils';
 import { requireAuth } from '../../../../lib/auth';
-import type { AspspResponse, AspspTransaction } from '../../../../types';
+import type {
+	AspspResponse,
+	AspspTransaction,
+} from '../../../../types/financial';
 
 const ACCOUNT_ID = process.env.BANK_ACCOUNT_ID || '';
 const ACCOUNT_IBAN = process.env.BANK_ACCOUNT_IBAN || '';

@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Transaction } from '../../../../types';
+import { Transaction } from '../../../../types/financial';
 import { type NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '../../../../lib/auth';
 import { timezonedDateToUTC } from './../utils';

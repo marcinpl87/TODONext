@@ -5,7 +5,7 @@ import TenantCreate from '../../components/TenantCreate';
 import TenantItem from '../../components/TenantItem';
 import LoadingIconTwo from '../../components/LoadingIconTwo';
 import { useTenants, useLogin } from '../../hooks';
-import type { Tenant } from '../../types';
+import type { Tenant } from '../../types/realEstate';
 
 const Home: React.FC = () => {
 	const login = useLogin();

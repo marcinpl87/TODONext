@@ -4,7 +4,7 @@ import type {
 	Transaction,
 	AspspResponse,
 	AspspTransaction,
-} from '../../../types';
+} from '../../../types/financial';
 
 const PRIVATE_KEY = process.env.BANK_PRIVATE_KEY || '';
 const APPLICATION_ID = process.env.BANK_APPLICATION_ID || '';

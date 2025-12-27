@@ -5,7 +5,7 @@ import TodoList from '../../../components/TodoList';
 import TodoCreate from '../../../components/TodoCreate';
 import LoadingIconTwo from '../../../components/LoadingIconTwo';
 import { useLogin, useProjects, useTodos } from '../../../hooks';
-import type { Todo } from '../../../types';
+import type { Todo } from '../../../types/project';
 
 type TodosProps = {
 	params: { id: string };

@@ -9,7 +9,7 @@ import ProjectItem from '../components/ProjectItem';
 import LoadingIconTwo from '../components/LoadingIconTwo';
 import { useProjects, useLogin, useTodos } from '../hooks';
 import { LS_KEY_PROJECTS, LS_KEY_TODOS } from '../consts';
-import type { Project, Todo } from '../types';
+import type { Project, Todo } from '../types/project';
 
 const Home: React.FC = () => {
 	const login = useLogin();

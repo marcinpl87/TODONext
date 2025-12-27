@@ -8,7 +8,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import TransactionForm from './TransactionForm';
 import { MILISECONDS_FORMAT } from '../consts';
-import type { Transaction } from '../types';
+import type { Transaction } from '../types/financial';
 
 type TransactionCreateProps = {
 	addTransaction: (transaction: Transaction, callback: () => void) => void;

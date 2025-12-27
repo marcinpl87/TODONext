@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { Link } from 'next-view-transitions';
 import { cn } from '../utils';
 import { siteConfig } from '../config';
-import type { NavItem } from '../types';
+import type { NavItem } from '../types/app';
 
 type MainNavProps = {
 	items?: NavItem[];
