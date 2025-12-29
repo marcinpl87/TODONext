@@ -7,7 +7,7 @@ import LoadingIconTwo from '../../components/LoadingIconTwo';
 import { useProperties, useLogin } from '../../hooks';
 import type { Property } from '../../types/realEstate';
 
-const Home: React.FC = () => {
+const Properties: React.FC = () => {
 	const login = useLogin();
 	const { properties: lsProperties, isLoading: isPropertyLoading } =
 		useProperties();
@@ -108,4 +108,4 @@ const Home: React.FC = () => {
 	);
 };
 
-export default Home;
+export default Properties;

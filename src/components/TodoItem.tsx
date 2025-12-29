@@ -281,11 +281,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
 						<div className="text-2xl font-bold break-words">
 							{todo.title}
 						</div>
-						<p className="text-md text-muted-foreground whitespace-pre-line break-words py-1">
+						<p className="text-md text-muted-foreground whitespace-pre-line break-words pt-1 pb-3">
 							{todo.description}
 						</p>
 						{subtasks.filter(Boolean).length > 0 && (
-							<div className="text-md text-muted-foreground whitespace-pre-line break-words py-1">
+							<div className="text-md text-muted-foreground whitespace-pre-line break-words pb-2">
 								{subtasks
 									.filter(Boolean)
 									.map((subtask, index) => (

@@ -7,7 +7,7 @@ import LoadingIconTwo from '../../components/LoadingIconTwo';
 import { useTenants, useLogin } from '../../hooks';
 import type { Tenant } from '../../types/realEstate';
 
-const Home: React.FC = () => {
+const Tenants: React.FC = () => {
 	const login = useLogin();
 	const { tenants: lsTenants, isLoading: isTenantLoading } = useTenants();
 	const [tenantsState, setTenantsState] = useState<Tenant[]>([]);
@@ -104,4 +104,4 @@ const Home: React.FC = () => {
 	);
 };
 
-export default Home;
+export default Tenants;

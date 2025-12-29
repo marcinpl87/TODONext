@@ -235,11 +235,11 @@ const TenantItem: React.FC<TenantItemProps> = ({
 				/>
 			) : (
 				<CardContent className="mt-5">
-					<div className="text-2xl font-bold underline break-words pb-2">
+					<div className="text-2xl font-bold underline break-words pb-5">
 						<Link href={`tenant/${tenant.id}`}>{tenant.name}</Link>
 					</div>
 					{tenant.address && (
-						<p className="text-md text-muted-foreground pb-2 whitespace-pre-line break-words">
+						<p className="text-md text-muted-foreground pb-5 whitespace-pre-line break-words">
 							{tenant.address}
 						</p>
 					)}

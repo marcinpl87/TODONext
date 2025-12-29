@@ -63,13 +63,13 @@ const ProjectItem: React.FC<ProjectItemProps> = ({
 				/>
 			) : (
 				<CardContent className="mt-5">
-					<div className="text-2xl font-bold underline break-words pb-2">
+					<div className="text-2xl font-bold underline break-words pb-5">
 						<Link href={`project/${project.id}`}>
 							{project.title}
 						</Link>
 					</div>
 					{project.description && (
-						<p className="text-md text-muted-foreground pb-2 whitespace-pre-line break-words">
+						<p className="text-md text-muted-foreground pb-5 whitespace-pre-line break-words">
 							{project.description}
 						</p>
 					)}
