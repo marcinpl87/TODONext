@@ -1,6 +1,12 @@
 'use client';
 
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, {
+	forwardRef,
+	useImperativeHandle,
+	useEffect,
+	useCallback,
+	useRef,
+} from 'react';
 
 type TodoTimerRef =
 	| HTMLDivElement
@@ -20,6 +26,8 @@ type TodoTimerProps = {
 	sec: number;
 	toggleDone: () => void;
 	todoTitle: string;
+	autoStart?: boolean;
+	disableConfirm?: boolean;
 };
 
 const TodoTimer = forwardRef<TodoTimerRef, TodoTimerProps>(
@@ -34,37 +42,68 @@ const TodoTimer = forwardRef<TodoTimerRef, TodoTimerProps>(
 			sec,
 			toggleDone,
 			todoTitle,
+			autoStart = false,
+			disableConfirm = false,
 		},
 		ref,
 	) => {
-		const getTimerStringToSeconds = (timeString: string) => {
+		const getTimerStringToSeconds = useCallback((timeString: string) => {
 			const parts = timeString.split(':');
 			const hours = parseInt(parts[0], 10);
 			const minutes = parseInt(parts[1], 10);
 			const seconds = parseInt(parts[2], 10);
 			return hours * 3600 + minutes * 60 + seconds;
-		};
+		}, []);
 
-		const startTimer = (e: Date) => {
-			const { total } = getTimeRemaining(e);
-			if (total >= 0) {
-				// update the timer
-				setTimer(getTimeRemainingToTimerString(e));
-			} else {
-				if (
-					confirm(
-						`Time is over! Would you like to mark TODO "${todoTitle}" as done?`,
-					)
-				) {
-					onClickStop();
-					toggleDone();
-				} else {
-					onClickStop();
-				}
+		const onClickStop = useCallback(() => {
+			if (intervalRef.current) {
+				clearInterval(intervalRef.current);
 			}
-		};
+			intervalRef.current = null;
+			setTimer(getTimeRemainingToTimerString(getDeadTime(sec)));
+		}, [
+			intervalRef,
+			setTimer,
+			getTimeRemainingToTimerString,
+			getDeadTime,
+			sec,
+		]);
 
-		const onClickStart = () => {
+		const startTimer = useCallback(
+			(e: Date) => {
+				const { total } = getTimeRemaining(e);
+				if (total >= 0) {
+					// update the timer
+					setTimer(getTimeRemainingToTimerString(e));
+				} else {
+					if (disableConfirm) {
+						onClickStop();
+					} else {
+						if (
+							confirm(
+								`Time is over! Would you like to mark TODO "${todoTitle}" as done?`,
+							)
+						) {
+							onClickStop();
+							toggleDone();
+						} else {
+							onClickStop();
+						}
+					}
+				}
+			},
+			[
+				getTimeRemaining,
+				setTimer,
+				getTimeRemainingToTimerString,
+				todoTitle,
+				toggleDone,
+				onClickStop,
+				disableConfirm,
+			],
+		);
+
+		const onClickStart = useCallback(() => {
 			const timerDateTime = getDeadTime(
 				(timer === getTimeRemainingToTimerString(getDeadTime(sec))
 					? sec // if timer is not started yet (not un-paused), then use default amount of seconds
@@ -78,7 +117,18 @@ const TodoTimer = forwardRef<TodoTimerRef, TodoTimerProps>(
 				startTimer(timerDateTime);
 			}, 1000);
 			intervalRef.current = id;
-		};
+		}, [
+			timer,
+			getDeadTime,
+			getTimeRemainingToTimerString,
+			sec,
+			setTimer,
+			intervalRef,
+			getTimerStringToSeconds,
+			startTimer,
+		]);
+
+		const hasAutoStarted = useRef(false);
 
 		const onClickPause = () => {
 			if (intervalRef.current) {
@@ -87,19 +137,19 @@ const TodoTimer = forwardRef<TodoTimerRef, TodoTimerProps>(
 			intervalRef.current = null;
 		};
 
-		const onClickStop = () => {
-			if (intervalRef.current) {
-				clearInterval(intervalRef.current);
-			}
-			intervalRef.current = null;
-			setTimer(getTimeRemainingToTimerString(getDeadTime(sec)));
-		};
-
 		useImperativeHandle(ref, () => ({
 			onClickStart,
 			onClickPause,
 			onClickStop,
 		}));
+
+		// Auto-start timer when component mounts if autoStart is true
+		useEffect(() => {
+			if (autoStart && !hasAutoStarted.current) {
+				hasAutoStarted.current = true;
+				onClickStart();
+			}
+		}, [autoStart, onClickStart]);
 
 		return <>{timer}</>;
 	},
