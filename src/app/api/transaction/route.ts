@@ -87,9 +87,31 @@ export const GET = async (request: NextRequest) => {
 		WHERE "isHidden" = FALSE
 		ORDER BY "creationTimestamp" DESC;
 	`;
-	// Pivot table query for expenses by category and month
-	// This query creates a budget-style summary showing spending per category per month
-	const pivotData = await sql`
+	// Pivot table query for expenses by category and month-year
+	// This query creates a budget-style summary showing spending per category per month-year
+	// First, get all available month-year combinations
+	const monthYearData = await sql`
+		SELECT DISTINCT 
+			TRIM(TO_CHAR("date", 'month-YYYY')) AS month_year_key,
+			TO_DATE(TRIM(TO_CHAR("date", 'month-YYYY')), 'month-YYYY') AS sort_date
+		FROM bank_transaction 
+		WHERE "isHidden" = FALSE 
+			AND COALESCE("amountCustom", "amount") < 0
+		ORDER BY sort_date DESC
+	`;
+
+	const monthYearColumns = monthYearData.rows.map(row => row.month_year_key);
+
+	// Build dynamic pivot query
+	const pivotColumns = monthYearColumns
+		.map(
+			monthYear =>
+				`COALESCE(SUM(CASE WHEN TRIM(TO_CHAR(me."date", 'month-YYYY')) = '${monthYear}' THEN me.expense_amount END), 0) AS "${monthYear}"`,
+		)
+		.join(',\n\t\t\t');
+
+	// Construct the full query as a string
+	const pivotQueryString = `
 		WITH monthly_expenses AS (
 			SELECT 
 				"categoryId",
@@ -97,12 +119,11 @@ export const GET = async (request: NextRequest) => {
 					WHEN "categoryId" IS NULL THEN 'Uncategorized'
 					ELSE "categoryId"::text
 				END AS category_display,
-				DATE_TRUNC('month', "date") AS month,
+				"date",
 				ABS(COALESCE("amountCustom", "amount")) AS expense_amount
 			FROM bank_transaction 
 			WHERE "isHidden" = FALSE 
-				AND COALESCE("amountCustom", "amount") < 0  -- Only expenses (negative amounts)
-				AND "date" >= DATE_TRUNC('year', CURRENT_DATE)  -- Current year only
+				AND COALESCE("amountCustom", "amount") < 0
 		),
 		category_totals AS (
 			SELECT 
@@ -113,24 +134,15 @@ export const GET = async (request: NextRequest) => {
 		)
 		SELECT 
 			ct.category_display AS category,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 1 THEN me.expense_amount END), 0) AS january,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 2 THEN me.expense_amount END), 0) AS february,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 3 THEN me.expense_amount END), 0) AS march,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 4 THEN me.expense_amount END), 0) AS april,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 5 THEN me.expense_amount END), 0) AS may,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 6 THEN me.expense_amount END), 0) AS june,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 7 THEN me.expense_amount END), 0) AS july,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 8 THEN me.expense_amount END), 0) AS august,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 9 THEN me.expense_amount END), 0) AS september,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 10 THEN me.expense_amount END), 0) AS october,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 11 THEN me.expense_amount END), 0) AS november,
-			COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM me.month) = 12 THEN me.expense_amount END), 0) AS december,
+			${pivotColumns},
 			ct.total_spending AS total
 		FROM category_totals ct
 		LEFT JOIN monthly_expenses me ON ct.category_display = me.category_display
 		GROUP BY ct.category_display, ct.total_spending
 		ORDER BY ct.total_spending DESC;
 	`;
+
+	const pivotData = await sql.query(pivotQueryString);
 
 	return NextResponse.json(
 		{
