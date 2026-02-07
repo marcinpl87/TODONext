@@ -3,7 +3,7 @@ import { ViewTransitions } from 'next-view-transitions';
 import LoadingPage from '../components/LoadingPage';
 import ScrollTopButton from '../components/ScrollTopButton';
 import { cn, fontSans } from '../utils';
-import { LoginProvider } from '../hooks';
+import { LoginProvider } from '../hooks/app';
 import type { Metadata } from 'next';
 import '../globals.scss';
 

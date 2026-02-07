@@ -3,7 +3,7 @@
 import React, { type FormEvent, useState } from 'react';
 import InputText from './InputText';
 import Button from './Button';
-import { useDispatchLogin } from '../hooks';
+import { useDispatchLogin } from '../hooks/app';
 import { LOGIN_ACTIONS } from '../types/app';
 
 const LoginForm: React.FC = () => {

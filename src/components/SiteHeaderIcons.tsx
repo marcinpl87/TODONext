@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'next-view-transitions';
 import { Github, LogOut } from 'lucide-react';
 import { siteConfig } from '../config';
-import { useDispatchLogin, useLogin } from '../hooks';
+import { useDispatchLogin, useLogin } from '../hooks/app';
 import { Button } from './ui/button';
 import ThemeToggle from './ThemeToggle';
 import MyAvatar from './MyAvatar';

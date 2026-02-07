@@ -7,7 +7,7 @@ import TodoTimer from './TodoTimer';
 import TodoControls from './TodoControls';
 import MyTimeAgo from './MyTimeAgo';
 import MyAvatar from './MyAvatar';
-import { useLogin } from '../hooks';
+import { useLogin } from '../hooks/app';
 import { SUBTASK_DONE_MARKER } from '../consts';
 import type { Todo } from '../types/project';
 
