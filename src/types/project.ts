@@ -21,3 +21,13 @@ export type Todo = {
 	doneTimestamp: number;
 	creationTimestamp: number;
 };
+
+export type Goal = Pick<
+	Todo,
+	| 'id'
+	| 'userId'
+	| 'title'
+	| 'description'
+	| 'estimatedTime'
+	| 'creationTimestamp'
+>;
