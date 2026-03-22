@@ -1,83 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import TenantCreate from '../../components/TenantCreate';
 import TenantItem from '../../components/TenantItem';
 import LoadingIconTwo from '../../components/LoadingIconTwo';
-import { useTenants, useLogin } from '../../hooks';
-import type { Tenant } from '../../types/realEstate';
+import { useTenants } from '../../hooks/tenants';
+import { useLogin } from '../../hooks/app';
 
 const Tenants: React.FC = () => {
 	const login = useLogin();
-	const { tenants: lsTenants, isLoading: isTenantLoading } = useTenants();
-	const [tenantsState, setTenantsState] = useState<Tenant[]>([]);
-	const addTenant = (tenant: Tenant, callback: () => void) => {
-		const cache = [...tenantsState];
-		setTenantsState([tenant, ...tenantsState]);
-		callback();
-		fetch('/api/tenant', {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userId: login.userId,
-				tenant,
-			}),
-		}).catch(() => {
-			setTenantsState([...cache]); // revert back to the previous state
-		});
-	};
-	const updateTenant = (updatedTenant: Tenant, callback: () => void) => {
-		const cache = [...tenantsState];
-		setTenantsState([
-			...tenantsState.map(tenant =>
-				tenant.id === updatedTenant.id ? updatedTenant : tenant,
-			),
-		]);
-		callback();
-		fetch(`/api/tenant/${updatedTenant.id}`, {
-			method: 'PATCH',
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				userId: login.userId,
-				tenant: updatedTenant,
-			}),
-		}).catch(() => {
-			setTenantsState([...cache]); // revert back to the previous state
-		});
-	};
-	const removeTenant = (id: string, name: string) => {
-		if (
-			confirm(
-				`Are you sure you want to remove "${name}" (the Tenant will be permanently deleted) ?`,
-			)
-		) {
-			const cache = [...tenantsState];
-			setTenantsState([
-				...tenantsState.filter(tenant => tenant.id !== id),
-			]);
-			fetch(`/api/tenant/${id}`, {
-				method: 'DELETE',
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-					'Content-Type': 'application/json',
-				},
-			}).catch(() => {
-				setTenantsState([...cache]); // revert back to the previous state
-			});
-		}
-	};
+	const { tenants, add, update, remove, isLoading } = useTenants(
+		login.userId,
+	);
 
-	useEffect(() => {
-		setTenantsState(lsTenants);
-	}, [lsTenants]);
-
-	if (isTenantLoading) {
+	if (isLoading) {
 		return (
 			<LoadingIconTwo className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
 		);
@@ -86,8 +22,8 @@ const Tenants: React.FC = () => {
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="text-2xl font-bold my-5">Tenants</h1>
-			<TenantCreate addTenant={addTenant} />
-			{tenantsState
+			<TenantCreate addTenant={add} />
+			{tenants
 				.sort(
 					(a, b) =>
 						(b.creationTimestamp || 0) - (a.creationTimestamp || 0),
@@ -96,8 +32,8 @@ const Tenants: React.FC = () => {
 					<TenantItem
 						key={tenant.id}
 						tenant={tenant}
-						updateTenant={updateTenant}
-						removeTenant={removeTenant}
+						updateTenant={update}
+						removeTenant={remove}
 					/>
 				))}
 		</div>
