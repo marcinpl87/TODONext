@@ -1,37 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Tenant } from '../../../types/realEstate';
+import React from 'react';
 import { Card } from '../../../components/ui/card';
 import LoadingIconTwo from '../../../components/LoadingIconTwo';
+import { useTenant } from '../../../hooks/tenant';
 
 type TenantDetailsProps = {
 	params: { id: string };
 };
 
 const TenantDetails: React.FC<TenantDetailsProps> = ({ params }) => {
-	const [tenant, setTenant] = useState<Tenant | null>(null);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		if (params.id) {
-			fetch(`/api/tenant/${params.id}`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(response => response.json())
-				.then(data => {
-					setTenant(data.data);
-					setIsLoading(false);
-				})
-				.catch(() => {
-					setIsLoading(false);
-				});
-		}
-	}, [params.id]);
+	const { tenant, isLoading } = useTenant(params.id);
 
 	if (isLoading) {
 		return (
