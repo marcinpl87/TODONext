@@ -1,41 +1,38 @@
 'use client';
 
 import React from 'react';
-import TodoItem from '../../components/TodoItem';
-import type { Todo } from '../../types/project';
+import GoalItem from '../../components/GoalItem';
+import LoadingIconTwo from '../../components/LoadingIconTwo';
+import GoalCreate from '../../components/GoalCreate';
+import { useLogin } from '../../hooks/app';
+import { useGoals } from '../../hooks/goals';
 
 const Goals: React.FC = () => {
-	const goals: Todo[] = [
-		{
-			date: null,
-			id: '',
-			userId: '',
-			projectId: '',
-			title: 'test',
-			description: 'desc',
-			subtasks: { data: [] },
-			creationTimestamp: 1767045002817,
-			estimatedTime: 24 * 3600 - 1,
-			isDone: false,
-			doneTimestamp: 0,
-		},
-	];
+	const login = useLogin();
+	const { goals, isLoading, add, update, remove } = useGoals(login.userId);
+
+	if (isLoading) {
+		return (
+			<LoadingIconTwo className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
 
 	return (
 		<div className="flex flex-col items-center max-w-4xl m-auto">
 			<h1 className="text-2xl font-bold my-5">Goals</h1>
+			<GoalCreate addGoal={add} />
 			<div className="w-full flex flex-col items-center">
 				{goals
 					.sort(
 						(a, b) =>
-							(b.doneTimestamp || 0) - (a.doneTimestamp || 0),
+							(a.estimatedTime || 0) - (b.estimatedTime || 0),
 					)
 					.map(goal => (
-						<TodoItem
+						<GoalItem
 							key={goal.id}
-							todo={goal}
-							updateTodo={() => {}}
-							removeTodo={() => {}}
+							goal={goal}
+							updateGoal={update}
+							removeGoal={remove}
 						/>
 					))}
 			</div>
