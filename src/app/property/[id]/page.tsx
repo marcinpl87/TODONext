@@ -1,37 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Property } from '../../../types/realEstate';
+import React from 'react';
 import { Card } from '../../../components/ui/card';
 import LoadingIconTwo from '../../../components/LoadingIconTwo';
+import { useProperty } from '../../../hooks/property';
 
 type PropertyDetailsProps = {
 	params: { id: string };
 };
 
 const PropertyDetails: React.FC<PropertyDetailsProps> = ({ params }) => {
-	const [property, setProperty] = useState<Property | null>(null);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		if (params.id) {
-			fetch(`/api/property/${params.id}`, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-					'Content-Type': 'application/json',
-				},
-			})
-				.then(response => response.json())
-				.then(data => {
-					setProperty(data.data);
-					setIsLoading(false);
-				})
-				.catch(() => {
-					setIsLoading(false);
-				});
-		}
-	}, [params.id]);
+	const { property, isLoading } = useProperty(params.id);
 
 	if (isLoading) {
 		return (
