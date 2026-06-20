@@ -208,3 +208,14 @@ CREATE TABLE "public"."bank_transaction" (
     "isHidden" boolean DEFAULT false
 );
 ```
+
+```
+CREATE TABLE "public"."goal" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "userId" uuid,
+    "title" varchar,
+    "description" text,
+    "creationTimestamp" timestamp DEFAULT NOW(),
+    "estimatedTime" timestamp DEFAULT NOW()
+);
+```
