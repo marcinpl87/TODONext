@@ -47,7 +47,7 @@ export const POST = async (request: NextRequest) => {
 
 		// Log successful login
 		await sql`
-			INSERT INTO log (userId, action, datetime)
+			INSERT INTO log ("userId", action, datetime)
 			VALUES (
 				${user.id},
 				'login',

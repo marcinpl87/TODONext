@@ -79,11 +79,11 @@ CREATE TABLE "public"."todo" (
     "projectId" uuid,
     "title" varchar,
     "description" text,
-    "subtasks" jsonb,
     "creationTimestamp" timestamp DEFAULT NOW(),
     "estimatedTime" integer DEFAULT 0,
     "isDone" boolean DEFAULT false,
-    "doneTimestamp" timestamp DEFAULT null
+    "doneTimestamp" timestamp DEFAULT null,
+    "subtasks" jsonb
 );
 ```
 
@@ -217,5 +217,14 @@ CREATE TABLE "public"."goal" (
     "description" text,
     "creationTimestamp" timestamp DEFAULT NOW(),
     "estimatedTime" timestamp DEFAULT NOW()
+);
+```
+
+```
+CREATE TABLE "public"."log" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "userId" varchar,
+    "action" varchar,
+    "datetime" varchar
 );
 ```
