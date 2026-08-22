@@ -26,6 +26,7 @@ import { Textarea } from '../../components/ui/textarea';
 import IconButton from '../../components/IconButton';
 import MyAvatar from '../../components/MyAvatar';
 import DynamicInputsList from '../../components/DynamicInputsList';
+import ContributionGraph from '../../components/ContributionGraph';
 
 const FileUpload: React.FC = () => {
 	const [fileContent, setFileContent] = useState<string>('No file selected');
@@ -149,6 +150,17 @@ const Test: React.FC = () => {
 					<Button variant="ghost">Cancel</Button>
 					<Button variant="outline">Submit</Button>
 				</CardFooter>
+			</Card>
+			<h1 className="mb-5 text-2xl font-bold">Contributions</h1>
+			<Card className="w-full max-w-4xl mb-5">
+				<CardHeader className="pb-2">
+					<CardDescription>
+						Sample activity from the last year
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<ContributionGraph />
+				</CardContent>
 			</Card>
 		</div>
 	);
