@@ -228,3 +228,60 @@ CREATE TABLE "public"."log" (
     "datetime" varchar
 );
 ```
+
+```
+CREATE TABLE "public"."bauth_user" (
+    "id" text PRIMARY KEY,
+    "name" text NOT NULL,
+    "email" text NOT NULL,
+    "emailVerified" boolean NOT NULL,
+    "image" text,
+    "createdAt" timestamptz NOT NULL,
+    "updatedAt" timestamptz NOT NULL,
+    "status" text NOT NULL DEFAULT 'active'
+);
+
+CREATE UNIQUE INDEX "bauth_user_email_key" ON "public"."bauth_user" ("email");
+```
+
+```
+CREATE TABLE "public"."bauth_session" (
+    "id" text PRIMARY KEY,
+    "userId" text NOT NULL REFERENCES "public"."bauth_user" ("id") ON DELETE CASCADE,
+    "token" text NOT NULL UNIQUE,
+    "expiresAt" timestamptz NOT NULL,
+    "ipAddress" text,
+    "userAgent" text,
+    "createdAt" timestamptz NOT NULL,
+    "updatedAt" timestamptz NOT NULL
+);
+```
+
+```
+CREATE TABLE "public"."bauth_account" (
+    "id" text PRIMARY KEY,
+    "userId" text NOT NULL REFERENCES "public"."bauth_user" ("id") ON DELETE CASCADE,
+    "accountId" text NOT NULL,
+    "providerId" text NOT NULL,
+    "accessToken" text,
+    "refreshToken" text,
+    "accessTokenExpiresAt" timestamptz,
+    "refreshTokenExpiresAt" timestamptz,
+    "scope" text,
+    "idToken" text,
+    "password" text,
+    "createdAt" timestamptz NOT NULL,
+    "updatedAt" timestamptz NOT NULL
+);
+```
+
+```
+CREATE TABLE "public"."bauth_verification" (
+    "id" text PRIMARY KEY,
+    "identifier" text NOT NULL,
+    "value" text NOT NULL,
+    "expiresAt" timestamptz NOT NULL,
+    "createdAt" timestamptz NOT NULL,
+    "updatedAt" timestamptz NOT NULL
+);
+```
