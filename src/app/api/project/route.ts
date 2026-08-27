@@ -1,22 +1,21 @@
 import { sql } from '@vercel/postgres';
 import { Project } from '../../../types/project';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../lib/auth';
+import { auth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const data: { userId: string; project: Project } = await request.json();
 
 	// Ensure the authenticated user can only create projects for themselves
-	if (data.userId !== authResult.user?.userId) {
+	if (data.userId !== session.user.id) {
 		return NextResponse.json(
 			{ message: 'Forbidden: Cannot create projects for other users' },
 			{ status: 403 },
@@ -35,7 +34,7 @@ export const POST = async (request: NextRequest) => {
 			VALUES ($1, $2, $3, $4, to_timestamp($5));`,
 			[
 				data.project.id,
-				data.userId,
+				session.user.id,
 				data.project.title,
 				data.project.description,
 				data.project.creationTimestamp
@@ -49,12 +48,11 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	// Only return projects for the authenticated user
@@ -66,7 +64,7 @@ export const GET = async (request: NextRequest) => {
 			"description",
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		FROM project
-		WHERE "userId" = ${authResult.user?.userId}
+		WHERE "userId" = ${session.user.id}
 		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json({ data: data.rows }, { status: 200 });

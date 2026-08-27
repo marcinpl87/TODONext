@@ -1,14 +1,10 @@
 'use client';
 
-import {
-	useReducer,
-	useContext,
-	createContext,
-	ReactNode,
-	Dispatch,
-} from 'react';
+import { useContext, createContext, ReactNode, Dispatch } from 'react';
 import SiteHeader from '../components/SiteHeader';
 import LoginForm from '../components/LoginForm';
+import LoadingIconTwo from '../components/LoadingIconTwo';
+import { authClient } from '../lib/auth-client';
 import {
 	LOGIN_ACTIONS,
 	type LoginState,
@@ -23,33 +19,34 @@ const LoginContext = createContext<LoginState>({
 });
 const LoginDispatchContext = createContext<Dispatch<LoginDispatch>>(() => null);
 
-const loginReducer = (state: LoginState, loginDispatchData: LoginDispatch) => {
-	switch (loginDispatchData.action) {
-		case LOGIN_ACTIONS.LOGIN:
-			return {
-				isLoggedIn: true,
-				userId: loginDispatchData.userId,
-				userName: loginDispatchData.userName,
-				users: loginDispatchData.users || [],
-			};
-		case LOGIN_ACTIONS.LOGOUT:
-			return { isLoggedIn: false, userId: '', userName: '', users: [] };
-		default:
-			throw new Error(
-				`Unknown action: ${JSON.stringify(loginDispatchData)}`,
-			);
-	}
-};
-
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
-	const [state, dispatch] = useReducer<
-		(state: LoginState, loginDispatchData: LoginDispatch) => LoginState
-	>(loginReducer, {
-		isLoggedIn: false,
-		userId: '',
-		userName: '',
-		users: [],
-	});
+	const { data: session, isPending } = authClient.useSession();
+
+	const dispatch: Dispatch<LoginDispatch> = loginDispatchData => {
+		if (loginDispatchData.action === LOGIN_ACTIONS.LOGOUT) {
+			void authClient.signOut();
+		}
+	};
+
+	const state: LoginState = session?.user
+		? {
+				isLoggedIn: true,
+				userId: session.user.id,
+				userName: session.user.name,
+				users: [{ id: session.user.id, name: session.user.name }],
+			}
+		: {
+				isLoggedIn: false,
+				userId: '',
+				userName: '',
+				users: [],
+			};
+
+	if (isPending) {
+		return (
+			<LoadingIconTwo className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+		);
+	}
 
 	return (
 		<LoginDispatchContext.Provider value={dispatch}>

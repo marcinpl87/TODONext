@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
-import { requireAuth } from '../../../../lib/auth';
+import { auth } from '../../../../lib/auth';
 import { incrementalImport, saveTransactionsInDB } from '../utils';
 import type {
 	AspspResponse,
@@ -82,12 +82,11 @@ const getTransactionsFromToshl = async (): Promise<AspspResponse> => {
 
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 	const searchParams = request.nextUrl.searchParams;
 	const mode = searchParams.get('mode');
@@ -98,7 +97,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 			if (Array.isArray(incrementalTransactions)) {
 				if (incrementalTransactions.length > 0) {
 					const savedTransactions = await saveTransactionsInDB(
-						authResult.user?.userId || '',
+						session.user.id || '',
 						incrementalTransactions,
 					);
 					return NextResponse.json(

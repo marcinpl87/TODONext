@@ -1,22 +1,21 @@
 import { sql } from '@vercel/postgres';
 import { Todo } from '../../../types/project';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../lib/auth';
+import { auth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const data: { userId: string; todo: Todo } = await request.json();
 
 	// Ensure the authenticated user can only create todos for themselves
-	if (data.userId !== authResult.user?.userId) {
+	if (data.userId !== session.user.id) {
 		return NextResponse.json(
 			{ message: 'Forbidden: Cannot create todos for other users' },
 			{ status: 403 },
@@ -40,7 +39,7 @@ export const POST = async (request: NextRequest) => {
 				VALUES ($1, $2, $3, $4, $5, $6, to_timestamp($7), $8, $9, to_timestamp($10));`,
 			[
 				data.todo.id,
-				data.userId,
+				session.user.id,
 				data.todo.projectId,
 				data.todo.title,
 				data.todo.description,
@@ -59,12 +58,11 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	// Only return todos for the authenticated user
@@ -81,7 +79,7 @@ export const GET = async (request: NextRequest) => {
 			"isDone",
 			(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
 		FROM todo
-		WHERE "userId" = ${authResult.user?.userId}
+		WHERE "userId" = ${session.user.id}
 		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json({ data: data.rows }, { status: 200 });

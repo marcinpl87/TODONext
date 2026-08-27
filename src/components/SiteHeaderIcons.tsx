@@ -4,15 +4,14 @@ import React from 'react';
 import { Link } from 'next-view-transitions';
 import { Github, LogOut } from 'lucide-react';
 import { siteConfig } from '../config';
-import { useDispatchLogin, useLogin } from '../hooks/app';
+import { useLogin } from '../hooks/app';
+import { authClient } from '../lib/auth-client';
 import { Button } from './ui/button';
 import ThemeToggle from './ThemeToggle';
 import MyAvatar from './MyAvatar';
-import { LOGIN_ACTIONS } from '../types/app';
 
 const SiteHeaderIcons: React.FC = () => {
 	const login = useLogin();
-	const dispatchLogin = useDispatchLogin();
 
 	return (
 		<nav className="flex items-center space-x-1">
@@ -31,13 +30,7 @@ const SiteHeaderIcons: React.FC = () => {
 				variant="ghost"
 				size="icon"
 				onClick={() => {
-					localStorage.removeItem('authToken');
-					dispatchLogin({
-						action: LOGIN_ACTIONS.LOGOUT,
-						userId: '',
-						userName: '',
-						users: [],
-					});
+					void authClient.signOut();
 				}}
 				title={`Logout ${login.userName} (${login.userId})`}
 			>

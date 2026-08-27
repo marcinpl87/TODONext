@@ -1,27 +1,25 @@
-// Utility function to make authenticated API requests
+import { authClient } from './auth-client';
+
+// Utility function to make authenticated API requests.
+// The session cookie is sent automatically on same-origin fetches.
 export const authenticatedFetch = async (
 	url: string,
 	options: RequestInit = {},
 ): Promise<Response> => {
-	const token = localStorage.getItem('authToken');
-
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
 		...(options.headers as Record<string, string>),
 	};
 
-	if (token) {
-		headers['Authorization'] = `Bearer ${token}`;
-	}
-
 	return fetch(url, {
 		...options,
 		headers,
+		credentials: 'same-origin',
 	});
 };
 
-// Utility function to handle logout
 export const logout = (): void => {
-	localStorage.removeItem('authToken');
-	window.location.reload(); // Refresh to trigger login form
+	void authClient.signOut().finally(() => {
+		window.location.reload();
+	});
 };

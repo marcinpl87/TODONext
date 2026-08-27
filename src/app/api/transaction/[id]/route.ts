@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { Transaction } from '../../../../types/financial';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../../lib/auth';
+import { auth } from '../../../../lib/auth';
 import { timezonedDateToUTC } from './../utils';
 
 export const PATCH = async (
@@ -9,15 +9,14 @@ export const PATCH = async (
 	{ params }: { params: { id: string } },
 ) => {
 	const { id } = params;
-	const authResult = requireAuth(request);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 	if (!id) {
 		return NextResponse.json({ message: 'No ID error' }, { status: 403 });
-	}
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
 	}
 
 	const data: {
@@ -25,7 +24,7 @@ export const PATCH = async (
 		transaction: Partial<Transaction> & { id: string };
 	} = await request.json();
 
-	if (data.userId !== authResult.user?.userId) {
+	if (data.userId !== session.user.id) {
 		return NextResponse.json(
 			{
 				message:
@@ -93,7 +92,7 @@ export const PATCH = async (
 			const query = `
 				UPDATE bank_transaction 
 				SET ${updateFields.join(', ')}
-				WHERE "id" = '${id}' AND "userId" = '${data.userId}';
+				WHERE "id" = '${id}' AND "userId" = '${session.user.id}';
 			`;
 
 			await sql.query(query, values);
@@ -107,15 +106,14 @@ export const DELETE = async (
 	{ params }: { params: { id: string } },
 ) => {
 	const { id } = params;
-	const authResult = requireAuth(request);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 	if (!id) {
 		return NextResponse.json({ message: 'No ID error' }, { status: 403 });
-	}
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
 	}
 
 	await sql`

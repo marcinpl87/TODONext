@@ -1,16 +1,15 @@
 import { sql } from '@vercel/postgres';
 import { Tenant } from '../../../types/realEstate';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../lib/auth';
+import { auth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const data: { userId: string; tenant: Tenant } = await request.json();
@@ -112,12 +111,11 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 	const data = await sql`
 		SELECT

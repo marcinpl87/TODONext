@@ -1,22 +1,21 @@
 import { sql } from '@vercel/postgres';
 import { Goal } from '../../../types/project';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../lib/auth';
+import { auth } from '../../../lib/auth';
 
 export const POST = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const data: { userId: string; goal: Goal } = await request.json();
 
 	// Ensure the authenticated user can only create goals for themselves
-	if (data.userId !== authResult.user?.userId) {
+	if (data.userId !== session.user.id) {
 		return NextResponse.json(
 			{ message: 'Forbidden: Cannot create goals for other users' },
 			{ status: 403 },
@@ -36,7 +35,7 @@ export const POST = async (request: NextRequest) => {
 				VALUES ($1, $2, $3, $4, to_timestamp($5), to_timestamp($6));`,
 			[
 				data.goal.id,
-				data.userId,
+				session.user.id,
 				data.goal.title,
 				data.goal.description,
 				data.goal.creationTimestamp
@@ -51,12 +50,11 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	// Only return goals for the authenticated user
@@ -69,7 +67,7 @@ export const GET = async (request: NextRequest) => {
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp",
 			(EXTRACT(EPOCH FROM "estimatedTime") * 1000)::BIGINT AS "estimatedTime"
 		FROM goal
-		WHERE "userId" = ${authResult.user?.userId}
+		WHERE "userId" = ${session.user.id}
 		ORDER BY "creationTimestamp" DESC;
 	`;
 	return NextResponse.json(

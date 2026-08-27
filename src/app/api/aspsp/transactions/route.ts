@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getHeaders, incrementalImport, saveTransactionsInDB } from '../utils';
-import { requireAuth } from '../../../../lib/auth';
+import { auth } from '../../../../lib/auth';
 import type {
 	AspspResponse,
 	AspspTransaction,
@@ -65,12 +65,11 @@ const getOnePage = async (continuationKey?: string): Promise<AspspResponse> => {
 
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const searchParams = request.nextUrl.searchParams;
@@ -82,7 +81,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 			if (Array.isArray(incrementalTransactions)) {
 				if (incrementalTransactions.length > 0) {
 					await saveTransactionsInDB(
-						authResult.user?.userId || '',
+						session.user.id || '',
 						incrementalTransactions,
 					);
 					return NextResponse.json(
@@ -101,7 +100,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 			return NextResponse.json(incrementalTransactions, { status: 200 }); // could be error
 		} else if (mode === 'importAll') {
 			await saveTransactionsInDB(
-				authResult.user?.userId || '',
+				session.user.id || '',
 				aspspData,
 			);
 			return NextResponse.json(

@@ -1,26 +1,25 @@
 import { sql } from '@vercel/postgres';
 import { Todo } from '../../../../types/project';
 import { type NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '../../../../lib/auth';
+import { auth } from '../../../../lib/auth';
 
 export const PATCH = async (
 	request: NextRequest,
 	{ params }: { params: { id: string } },
 ) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const { id } = params;
 	const data: { userId: string; todo: Todo } = await request.json();
 
 	// Ensure the authenticated user can only update their own todos
-	if (data.userId !== authResult.user?.userId) {
+	if (data.userId !== session.user.id) {
 		return NextResponse.json(
 			{ message: 'Forbidden: Cannot update todos for other users' },
 			{ status: 403 },
@@ -39,7 +38,7 @@ export const PATCH = async (
 			WHERE "id" = $1 AND "userId" = $2;`,
 			[
 				id,
-				data.userId,
+				session.user.id,
 				data.todo.title,
 				data.todo.description,
 				data.todo.subtasks,
@@ -61,12 +60,11 @@ export const GET = async (
 	{ params }: { params: { id: string } },
 ) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const { id } = params;
@@ -84,7 +82,7 @@ export const GET = async (
 				"isDone",
 				(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
 			FROM todo
-			WHERE "id" = ${id} AND "userId" = ${authResult.user?.userId};
+			WHERE "id" = ${id} AND "userId" = ${session.user.id};
 		`;
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
@@ -96,19 +94,18 @@ export const DELETE = async (
 	{ params }: { params: { id: string } },
 ) => {
 	// Check authentication
-	const authResult = requireAuth(request);
-	if (authResult.error) {
-		return NextResponse.json(
-			{ message: authResult.error },
-			{ status: 401 },
-		);
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+	if (!session) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
 	const { id } = params;
 	if (id) {
 		await sql`
 			DELETE FROM todo
-			WHERE "id" = ${id} AND "userId" = ${authResult.user?.userId};
+			WHERE "id" = ${id} AND "userId" = ${session.user.id};
 		`;
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
