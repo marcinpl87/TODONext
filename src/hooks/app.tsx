@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, createContext, ReactNode, Dispatch } from 'react';
+import { useContext, useState, createContext, ReactNode, Dispatch } from 'react';
 import SiteHeader from '../components/SiteHeader';
 import LoginForm from '../components/LoginForm';
 import LoadingIconTwo from '../components/LoadingIconTwo';
@@ -21,6 +21,12 @@ const LoginDispatchContext = createContext<Dispatch<LoginDispatch>>(() => null);
 
 export const LoginProvider = ({ children }: { children: ReactNode }) => {
 	const { data: session, isPending } = authClient.useSession();
+	const [hasResolvedSession, setHasResolvedSession] = useState(false);
+	// A tab return refetches the session and sets isPending again while logged out.
+	// Only the first check should replace the page; later ones must leave the form mounted.
+	if (!hasResolvedSession && !isPending) {
+		setHasResolvedSession(true);
+	}
 
 	const dispatch: Dispatch<LoginDispatch> = loginDispatchData => {
 		if (loginDispatchData.action === LOGIN_ACTIONS.LOGOUT) {
@@ -42,7 +48,7 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
 				users: [],
 			};
 
-	if (isPending) {
+	if (!hasResolvedSession) {
 		return (
 			<LoadingIconTwo className="absolute z-[1] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
 		);
