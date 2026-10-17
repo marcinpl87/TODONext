@@ -1,9 +1,11 @@
 'use client';
 
 import React, { type FormEvent, useState } from 'react';
-import InputText from './InputText';
-import Button from './Button';
 import { authClient } from '../lib/auth-client';
+import { Button } from './ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 
 const LoginForm: React.FC = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,43 +39,64 @@ const LoginForm: React.FC = () => {
 		}
 	};
 
+	const errorClassName = isError
+		? 'border-destructive focus-visible:ring-destructive'
+		: undefined;
+
 	return (
-		<div className="z-10 w-full max-w-4xl items-center justify-between font-mono sm:flex p-24">
-			<h2 className="text-center text-2xl font-bold mb-4">Login</h2>
-			<form onSubmit={onSubmit} className="sm:w-1/2">
-				<InputText
-					className="mb-4"
-					id="email"
-					name="email"
-					type="email"
-					required
-					autoComplete="email"
-					label="Email"
-					placeholder="Email"
-					disabled={isLoading}
-					isError={isError}
-				/>
-				<InputText
-					id="password"
-					name="password"
-					type="password"
-					required
-					minLength={8}
-					autoComplete="current-password"
-					label="Password"
-					placeholder="********"
-					disabled={isLoading}
-					isError={isError}
-				/>
-				<p className="text-red-500 text-xs font-bold mt-3 mb-3">
-					{isError ? errorMessage : <>&nbsp;</>}
-				</p>
-				<div className="flex flex-row-reverse items-center justify-between text-right">
-					<Button type="submit" disabled={isLoading}>
-						{isLoading ? 'Loading...' : 'Login'}
-					</Button>
-				</div>
-			</form>
+		<div className="flex min-h-screen w-full items-center justify-center px-5">
+			<Card className="w-full max-w-md">
+				<form onSubmit={onSubmit}>
+					<CardHeader>
+						<CardTitle>Login</CardTitle>
+					</CardHeader>
+					<CardContent className="grid gap-6">
+						<div className="grid gap-2">
+							<Label htmlFor="email">Email</Label>
+							<Input
+								id="email"
+								name="email"
+								type="email"
+								required
+								autoComplete="email"
+								placeholder="Email"
+								disabled={isLoading}
+								aria-invalid={isError}
+								className={errorClassName}
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="password">Password</Label>
+							<Input
+								id="password"
+								name="password"
+								type="password"
+								required
+								minLength={8}
+								autoComplete="current-password"
+								placeholder="********"
+								disabled={isLoading}
+								aria-invalid={isError}
+								className={errorClassName}
+							/>
+						</div>
+						{isError ? (
+							<p className="text-sm font-medium text-destructive">
+								{errorMessage}
+							</p>
+						) : null}
+					</CardContent>
+					<CardFooter className="justify-end">
+						<Button
+							variant="outline"
+							type="submit"
+							disabled={isLoading}
+						>
+							{isLoading ? 'Loading...' : 'Login'}
+						</Button>
+					</CardFooter>
+				</form>
+			</Card>
 		</div>
 	);
 };
