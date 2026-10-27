@@ -117,7 +117,7 @@ export const GET = async (request: NextRequest) => {
 	if (!session) {
 		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
-	const data = await sql`
+	const data = await sql.query(`
 		SELECT
 			"id",
 			"name",
@@ -161,7 +161,6 @@ export const GET = async (request: NextRequest) => {
 			"status",
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		FROM tenant
-		ORDER BY "creationTimestamp" DESC;
-	`;
+		ORDER BY "creationTimestamp" DESC;`);
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

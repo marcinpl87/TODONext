@@ -5,7 +5,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 export const POST = async (request: NextRequest) => {
 	const data: { todos: Todo[] } = await request.json();
 	if (data && data.todos && data.todos.length > 0) {
-		await sql`DELETE FROM todo;`; // clear the table to override data during import
+		await sql.query(`DELETE FROM todo;`); // clear the table to override data during import
 		data.todos.map(async (todo: Todo) => {
 			await sql.query(
 				`INSERT INTO todo (

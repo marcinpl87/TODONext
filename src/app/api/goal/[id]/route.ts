@@ -63,10 +63,11 @@ export const DELETE = async (
 
 	const { id } = params;
 	if (id) {
-		await sql`
-			DELETE FROM goal
-			WHERE "id" = ${id} AND "userId" = ${session.user.id};
-		`;
+		await sql.query(
+			`DELETE FROM goal
+			WHERE "id" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		);
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });

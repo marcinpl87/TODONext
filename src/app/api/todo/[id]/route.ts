@@ -69,8 +69,8 @@ export const GET = async (
 
 	const { id } = params;
 	if (id) {
-		const data = await sql`
-			SELECT
+		const data = await sql.query(
+			`SELECT
 				"id",
 				"userId",
 				"projectId",
@@ -82,8 +82,9 @@ export const GET = async (
 				"isDone",
 				(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
 			FROM todo
-			WHERE "id" = ${id} AND "userId" = ${session.user.id};
-		`;
+			WHERE "id" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		);
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
@@ -103,10 +104,11 @@ export const DELETE = async (
 
 	const { id } = params;
 	if (id) {
-		await sql`
-			DELETE FROM todo
-			WHERE "id" = ${id} AND "userId" = ${session.user.id};
-		`;
+		await sql.query(
+			`DELETE FROM todo
+			WHERE "id" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		);
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });

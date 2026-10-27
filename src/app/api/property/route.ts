@@ -68,7 +68,7 @@ export const GET = async (request: NextRequest) => {
 		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
-	const data = await sql`
+	const data = await sql.query(`
 		SELECT
 			"id",
 			"name",
@@ -87,7 +87,6 @@ export const GET = async (request: NextRequest) => {
 			"notes",
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		FROM property
-		ORDER BY "creationTimestamp" DESC;
-	`;
+		ORDER BY "creationTimestamp" DESC;`);
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

@@ -105,7 +105,8 @@ export const GET = async (
 ) => {
 	const { id } = params;
 	if (id) {
-		const data = await sql`
+		const data = await sql.query(
+			`
 			SELECT
 				"id",
 				"name",
@@ -149,8 +150,9 @@ export const GET = async (
 				"status",
 				(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 			FROM tenant
-			WHERE "id" = ${id};
-		`;
+			WHERE "id" = $1;`,
+			[id],
+		);
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
@@ -162,10 +164,11 @@ export const DELETE = async (
 ) => {
 	const { id } = params;
 	if (id) {
-		await sql`
-			DELETE FROM tenant
-			WHERE "id" = ${id};
-		`; // remove tenant
+		await sql.query(
+			`DELETE FROM tenant
+			WHERE "id" = $1;`,
+			[id],
+		); // remove tenant
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });

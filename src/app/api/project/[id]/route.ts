@@ -42,16 +42,17 @@ export const GET = async (
 
 	const { id } = params;
 	if (id) {
-		const data = await sql`
-			SELECT
+		const data = await sql.query(
+			`SELECT
 				"id",
 				"userId",
 				"title",
 				"description",
 				(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 			FROM project
-			WHERE "id" = ${id} AND "userId" = ${session.user.id};
-		`;
+			WHERE "id" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		);
 		return NextResponse.json({ data: data.rows[0] }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });
@@ -70,14 +71,16 @@ export const DELETE = async (
 
 	const { id } = params;
 	if (id) {
-		await sql`
-			DELETE FROM project
-			WHERE "id" = ${id} AND "userId" = ${session.user.id};
-		`; // remove project
-		await sql`
-			DELETE FROM todo
-			WHERE "projectId" = ${id} AND "userId" = ${session.user.id};
-		`; // remove all todos inside the project
+		await sql.query(
+			`DELETE FROM project
+			WHERE "id" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		); // remove project
+		await sql.query(
+			`DELETE FROM todo
+			WHERE "projectId" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		); // remove all todos inside the project
 		return NextResponse.json({ message: 'OK' }, { status: 200 });
 	}
 	return NextResponse.json({ message: 'No ID error' }, { status: 403 });

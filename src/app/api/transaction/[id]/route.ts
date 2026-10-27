@@ -116,9 +116,10 @@ export const DELETE = async (
 		return NextResponse.json({ message: 'No ID error' }, { status: 403 });
 	}
 
-	await sql`
-			DELETE FROM bank_transaction
-			WHERE "id" = ${id};
-		`; // remove transaction
+	await sql.query(
+		`DELETE FROM bank_transaction
+			WHERE "id" = $1;`,
+		[id],
+	); // remove transaction
 	return NextResponse.json({ message: 'OK' }, { status: 200 });
 };

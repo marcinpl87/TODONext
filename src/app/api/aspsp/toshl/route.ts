@@ -40,14 +40,15 @@ const transformTransaction = (tr: RawTransaction): AspspTransaction => {
 };
 
 const getTransactionsFromToshl = async (): Promise<AspspResponse> => {
-	const dbData: { rows: Array<Pick<AspspTransaction, 'date'>> } = await sql`
-		SELECT
+	const dbData: { rows: Array<Pick<AspspTransaction, 'date'>> } =
+		await sql.query(
+			`SELECT
 			(EXTRACT(EPOCH FROM "date") * 1000)::BIGINT AS "date"
 		FROM bank_transaction
 		WHERE "isManual" IS FALSE
 		ORDER BY "creationTimestamp" DESC
-		LIMIT 1;
-	`;
+		LIMIT 1;`,
+		);
 	if (dbData.rows.length > 0 && dbData.rows?.[0]?.date) {
 		const threeDaysBeforeDbDate = new Date(
 			Number(dbData.rows[0].date) - 3 * 24 * 60 * 60 * 1000,

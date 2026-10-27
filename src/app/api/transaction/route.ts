@@ -67,8 +67,8 @@ export const GET = async (request: NextRequest) => {
 	if (!session) {
 		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
-	const data = await sql`
-		SELECT
+	const data = await sql.query(
+		`SELECT
 			"id",
 			"userId",
 			(EXTRACT(EPOCH FROM "date") * 1000)::BIGINT AS "date",
@@ -83,20 +83,20 @@ export const GET = async (request: NextRequest) => {
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp"
 		FROM bank_transaction
 		WHERE "isHidden" = FALSE
-		ORDER BY "creationTimestamp" DESC;
-	`;
+		ORDER BY "creationTimestamp" DESC;`,
+	);
 	// Pivot table query for expenses by category and month-year
 	// This query creates a budget-style summary showing spending per category per month-year
 	// First, get all available month-year combinations
-	const monthYearData = await sql`
-		SELECT DISTINCT 
+	const monthYearData = await sql.query(
+		`SELECT DISTINCT 
 			TRIM(TO_CHAR("date", 'month-YYYY')) AS month_year_key,
 			TO_DATE(TRIM(TO_CHAR("date", 'month-YYYY')), 'month-YYYY') AS sort_date
 		FROM bank_transaction 
 		WHERE "isHidden" = FALSE 
 			AND COALESCE("amountCustom", "amount") < 0
-		ORDER BY sort_date DESC
-	`;
+		ORDER BY sort_date DESC`,
+	);
 
 	const monthYearColumns = monthYearData.rows.map(row => row.month_year_key);
 

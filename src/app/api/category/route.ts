@@ -9,11 +9,11 @@ export const GET = async (request: NextRequest) => {
 	if (!session) {
 		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 	}
-	const data = await sql`
-		SELECT
+	const data = await sql.query(
+		`SELECT
 			"id",
 			"name"
-		FROM transaction_category
-	`;
+		FROM transaction_category`,
+	);
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

@@ -66,8 +66,8 @@ export const GET = async (request: NextRequest) => {
 	}
 
 	// Only return todos for the authenticated user
-	const data = await sql`
-		SELECT
+	const data = await sql.query(
+		`SELECT
 			"id",
 			"userId",
 			"projectId",
@@ -79,8 +79,9 @@ export const GET = async (request: NextRequest) => {
 			"isDone",
 			(EXTRACT(EPOCH FROM "doneTimestamp") * 1000)::BIGINT AS "doneTimestamp"
 		FROM todo
-		WHERE "userId" = ${session.user.id}
-		ORDER BY "creationTimestamp" DESC;
-	`;
+		WHERE "userId" = $1
+		ORDER BY "creationTimestamp" DESC;`,
+		[session.user.id],
+	);
 	return NextResponse.json({ data: data.rows }, { status: 200 });
 };

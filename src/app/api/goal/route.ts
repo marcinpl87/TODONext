@@ -58,8 +58,8 @@ export const GET = async (request: NextRequest) => {
 	}
 
 	// Only return goals for the authenticated user
-	const data = await sql`
-		SELECT
+	const data = await sql.query(
+		`SELECT
 			"id",
 			"userId",
 			"title",
@@ -67,9 +67,10 @@ export const GET = async (request: NextRequest) => {
 			(EXTRACT(EPOCH FROM "creationTimestamp") * 1000)::BIGINT AS "creationTimestamp",
 			(EXTRACT(EPOCH FROM "estimatedTime") * 1000)::BIGINT AS "estimatedTime"
 		FROM goal
-		WHERE "userId" = ${session.user.id}
-		ORDER BY "creationTimestamp" DESC;
-	`;
+		WHERE "userId" = $1
+		ORDER BY "creationTimestamp" DESC;`,
+		[session.user.id],
+	);
 	return NextResponse.json(
 		{
 			data: data.rows.map(row => ({
