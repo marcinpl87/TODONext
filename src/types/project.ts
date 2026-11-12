@@ -31,3 +31,5 @@ export type Goal = Pick<
 	| 'estimatedTime'
 	| 'creationTimestamp'
 >;
+
+export type Habit = Pick<Todo, 'id' | 'userId' | 'title' | 'creationTimestamp'>;

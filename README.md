@@ -221,6 +221,15 @@ CREATE TABLE "public"."goal" (
 ```
 
 ```
+CREATE TABLE "public"."habit" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "userId" uuid,
+    "title" varchar,
+    "creationTimestamp" timestamp DEFAULT NOW()
+);
+```
+
+```
 CREATE TABLE "public"."log" (
     "id" uuid DEFAULT gen_random_uuid(),
     "userId" varchar,

@@ -14,6 +14,10 @@ export const siteConfig = {
 			href: '/goals',
 		},
 		{
+			title: 'Habits',
+			href: '/habits',
+		},
+		{
 			title: 'Properties',
 			href: '/properties',
 		},
