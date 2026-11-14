@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Habit } from '../types/project';
+import type { Habit, HabitDate } from '../types/project';
 
 export const useHabits = (userId: string) => {
 	const [habits, setHabits] = useState<Habit[]>([]);
@@ -88,6 +88,33 @@ export const useHabits = (userId: string) => {
 				errorCallback();
 		});
 	};
+	const complete = (habitDate: HabitDate) => {
+		const cache = habits.map(habit => ({
+			...habit,
+			dates: [...habit.dates],
+		}));
+		setHabits(
+			habits.map(habit =>
+				habit.id === habitDate.habitId &&
+				!habit.dates.includes(habitDate.date)
+					? { ...habit, dates: [habitDate.date, ...habit.dates] }
+					: habit,
+			),
+		);
+		fetch(`/api/habit/${habitDate.habitId}/date`, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				userId,
+				habitDate,
+			}),
+		}).catch(() => {
+			setHabits(cache); // revert back to the previous state
+		});
+	};
 	const remove = (id: string, title: string) => {
 		if (
 			confirm(
@@ -108,5 +135,5 @@ export const useHabits = (userId: string) => {
 		}
 	};
 
-	return { habits, add, update, remove, isLoading, error };
+	return { habits, add, update, complete, remove, isLoading, error };
 };

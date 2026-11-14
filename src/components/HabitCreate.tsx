@@ -25,6 +25,7 @@ const HabitCreate: React.FC<HabitCreateProps> = ({ addHabit }) => {
 				userId: login.userId,
 				title,
 				creationTimestamp: Date.now(),
+				dates: [],
 			},
 			() => {
 				setTitle('');

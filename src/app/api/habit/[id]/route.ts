@@ -60,6 +60,11 @@ export const DELETE = async (
 	const { id } = params;
 	if (id) {
 		await sql.query(
+			`DELETE FROM habit_date
+			WHERE "habitId" = $1 AND "userId" = $2;`,
+			[id, session.user.id],
+		);
+		await sql.query(
 			`DELETE FROM habit
 			WHERE "id" = $1 AND "userId" = $2;`,
 			[id, session.user.id],

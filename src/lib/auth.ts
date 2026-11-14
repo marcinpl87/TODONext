@@ -24,7 +24,8 @@ export const auth = betterAuth({
 	database: pool,
 	advanced: {
 		database: {
-			// Existing app tables store userId as uuid.
+			// Ids are UUIDs. App tables store userId as text so it can
+			// reference bauth_user(id) with ON DELETE CASCADE.
 			generateId: () => crypto.randomUUID(),
 		},
 	},

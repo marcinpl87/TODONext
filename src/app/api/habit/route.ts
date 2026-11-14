@@ -65,11 +65,27 @@ export const GET = async (request: NextRequest) => {
 		ORDER BY "creationTimestamp" DESC;`,
 		[session.user.id],
 	);
+	const dates = await sql.query(
+		`SELECT
+			"habitId",
+			to_char("date", 'YYYY-MM-DD') AS "date"
+		FROM habit_date
+		WHERE "userId" = $1
+		ORDER BY "date" DESC;`,
+		[session.user.id],
+	);
+	const datesByHabit = new Map<string, string[]>();
+	for (const row of dates.rows) {
+		const habitDates = datesByHabit.get(row.habitId) || [];
+		habitDates.push(row.date);
+		datesByHabit.set(row.habitId, habitDates);
+	}
 	return NextResponse.json(
 		{
 			data: data.rows.map(row => ({
 				...row,
 				creationTimestamp: Number(row.creationTimestamp),
+				dates: datesByHabit.get(row.id) || [],
 			})),
 		},
 		{ status: 200 },

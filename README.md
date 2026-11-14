@@ -65,7 +65,7 @@ CREATE TABLE "public"."user" (
 ```
 CREATE TABLE "public"."project" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    "userId" uuid,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
     "title" varchar,
     "description" text,
     "creationTimestamp" timestamp DEFAULT NOW()
@@ -75,8 +75,8 @@ CREATE TABLE "public"."project" (
 ```
 CREATE TABLE "public"."todo" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    "userId" uuid,
-    "projectId" uuid,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
+    "projectId" uuid REFERENCES project("id") ON DELETE CASCADE,
     "title" varchar,
     "description" text,
     "creationTimestamp" timestamp DEFAULT NOW(),
@@ -188,14 +188,14 @@ CREATE TABLE "public"."transaction_rule" (
     "transactionColumn" integer,
     "relation" integer,
     "value" text,
-    "categoryId" uuid
+    "categoryId" uuid REFERENCES transaction_category("id") ON DELETE CASCADE
 );
 ```
 
 ```
 CREATE TABLE "public"."bank_transaction" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    "userId" uuid,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
     "creationTimestamp" timestamp DEFAULT NOW(),
     "date" timestamp NULL DEFAULT NULL,
     "amount" numeric(12, 2),
@@ -212,7 +212,7 @@ CREATE TABLE "public"."bank_transaction" (
 ```
 CREATE TABLE "public"."goal" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    "userId" uuid,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
     "title" varchar,
     "description" text,
     "creationTimestamp" timestamp DEFAULT NOW(),
@@ -223,9 +223,19 @@ CREATE TABLE "public"."goal" (
 ```
 CREATE TABLE "public"."habit" (
     "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    "userId" uuid,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
     "title" varchar,
     "creationTimestamp" timestamp DEFAULT NOW()
+);
+```
+
+```
+CREATE TABLE "public"."habit_date" (
+    "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    "userId" text REFERENCES bauth_user("id") ON DELETE CASCADE,
+    "habitId" uuid REFERENCES habit("id") ON DELETE CASCADE,
+    "date" date,
+    UNIQUE ("userId", "habitId", "date")
 );
 ```
 

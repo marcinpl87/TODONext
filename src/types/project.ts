@@ -32,4 +32,16 @@ export type Goal = Pick<
 	| 'creationTimestamp'
 >;
 
-export type Habit = Pick<Todo, 'id' | 'userId' | 'title' | 'creationTimestamp'>;
+export type Habit = Pick<
+	Todo,
+	'id' | 'userId' | 'title' | 'creationTimestamp'
+> & {
+	dates: string[];
+};
+
+export type HabitDate = {
+	id: string;
+	userId: string;
+	habitId: string;
+	date: string;
+};
